@@ -1,87 +1,18 @@
 .user-center {
-  min-height: 100vh;
-  background: url('../../imgs/bg-birthday@3x.png') no-repeat center center / cover;
-  font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-  padding-bottom: 20px;
-
-  &__nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 55px 20px 0 20px;
-    height: 44px;
-    position: relative;
-  }
-
-  &__nav-back {
-    font-size: 20px;
-    color: #222;
-    flex: 0 0 20px;
-  }
-
-  &__nav-title {
-    font-size: 16px;
-    font-weight: bold;
-    color: #222;
-    flex: 1;
-    text-align: center;
-  }
-
-  &__profile {
-    display: flex;
-    align-items: center;
-    padding: 0 16px;
-    margin-bottom: 16px;
-    margin-top: 4px;
-  }
-
-  &__avatar {
-    width: 76px;
-    height: 76px;
-    border-radius: 50%;
-    margin-right: 10px;
-    background: #fff;
-    object-fit: cover;
-    border: 1px solid #eae9e2;
-  }
-
-  &__profile-info {
-    flex: 1;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
-
-  &__nickname {
-    font-size: 16px;
-    font-weight: bold;
-    color: #383838;
-  }
-
-  &__vip-status {
-    font-size: 14px;
-    color: #bdbdbd;
-    margin-top: 2px;
-  }
-
-  &__profile-edit {
-    width: 24px;
-    height: 24px;
-  }
-
   &__market {
     background: url('../../imgs/pic-card@2x.png') no-repeat center center / cover;
     display: flex;
     align-items: center;
-    border-radius: 18px;
-    margin: 0 12px 16px 12px;
-    padding: 16px 16px 16px 20px;
+    margin: 0 20px 20px 20px;
+    padding: 36px 30px 20px 30px;
     position: relative;
+    box-sizing: border-box;
     min-height: 160px;
+    border-radius: 30px;
   }
 
   &__market-info {
-    flex: 1;
+    // flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
@@ -89,26 +20,26 @@
 
   &__market-title {
     color: #fff;
-    font-size: 16px;
+    font-size: 18px;
     font-weight: bold;
-    margin-bottom: 4px;
+    margin-bottom: 7px;
   }
 
   &__market-desc {
     color: #7A7A7A;
     font-size: 14px;
-    margin-bottom: 9px;
+    margin-bottom: 27px;
   }
 
   &__market-btn {
-    background: #ffb43a;
-    color: #222;
-    font-size: 12px;
-    font-weight: bold;
-    border-radius: 12px;
-    height: 28px;
-    line-height: 28px;
-    padding: 0 20px;
+    background: #FCAC39;
+    font-size: 14px;
+    font-weight: 300;
+    color: #383838;
+    border-radius: 20px;
+    height: 40px;
+    width: 128px;
+    line-height: 40px;
     border: none;
   }
 
@@ -116,7 +47,7 @@
     display: flex;
     gap: 16px;
     justify-content: center;
-    margin: 0 12px;
+    margin: 0 20px;
   }
 
   &__feature {
@@ -127,7 +58,7 @@
     background: #fff;
     padding: 20px;
     box-sizing: border-box;
-    border-radius: 16px;
+    border-radius: 30px;
     border: 1px solid #CCCCCC;
 
     image {

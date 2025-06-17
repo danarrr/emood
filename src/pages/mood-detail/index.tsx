@@ -2,13 +2,13 @@ import { View, Button, Image, Textarea, Text, Progress } from '@tarojs/component
 import Taro, { useLoad, useRouter } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import PageHeader from '../../components/PageHeader'
-import IconCamera from '../../imgs/icon-camera@2x.png'
-import IconTime from '../../imgs/icon-time@2x.png'
+import IconCamera from '@imgs/icon-camera@2x.png'
+import IconTime from '@imgs/icon-time@2x.png'
 import './index.less'
 
 // 导入表情图片
-import happyEmoji from '../../imgs/emoji/happy.png';
-import sadEmoji from '../../imgs/emoji/sad.png';
+import happyEmoji from '@imgs/emoji/happy.png';
+import sadEmoji from '@imgs/emoji/sad.png';
 
 // 表情映射表
 const emojiMap = {

@@ -1,9 +1,7 @@
 .user-profile {
   display: flex;
   align-items: center;
-  padding: 0 16px;
-  margin-bottom: 16px;
-  margin-top: 4px;
+  padding: 0 20px 24px 20px;
 
   &__avatar-wrapper {
     padding: 0;
@@ -11,23 +9,20 @@
     border: none;
     line-height: normal;
     display: flex;
+   
     align-items: center;
-    justify-content: center;
-    width: 76px; /* Match avatar width */
-    height: 76px; /* Match avatar height */
     border-radius: 50%; /* Match avatar border-radius */
     overflow: hidden; /* Ensure avatar image is clipped to circle */
-    margin-right: 10px;
     &:after {
       border: none;
     }
   }
 
   &__avatar {
-    width: 76px;
-    height: 76px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
-    // margin-right: 10px;
+    margin-right: 12px;
     // background: #fff;
     object-fit: cover;
     border: 1px solid #eae9e2;

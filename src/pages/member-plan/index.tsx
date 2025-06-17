@@ -30,7 +30,6 @@ export default function MemberPlan () {
     if (!container || cards.length === 0) return;
 
     const handleScroll = () => {
-      console.log('hi比卡u 发阿发')
       const containerVisibleCenter = container.scrollLeft + container.offsetWidth / 2;
 
       let minDistance = Infinity;
@@ -121,15 +120,23 @@ export default function MemberPlan () {
       <View className='member-plan__benefits'>
         <View className='member-plan__benefit'>
           <Image src={IconSkin}></Image>
-          <View className='member-plan__benefit-text'>皮肤全解锁<br/>180天有效期</View>
+          <View className='member-plan__benefit-text'>
+            皮肤全解锁
+            <View className='member-plan__benefit-tip'>180天有效期</View>
+          </View>
         </View>
         <View className='member-plan__benefit'>
           <Image src={IconAi}></Image>
-          <View className='member-plan__benefit-text'>AI聊天<br/>300个量光</View>
+          <View className='member-plan__benefit-text'>
+            AI聊天
+            <View className='member-plan__benefit-tip'>300个星光</View>
+          </View>
         </View>
         <View className='member-plan__benefit'>
           <Image src={IconImage}></Image>
-          <View className='member-plan__benefit-text'>上传图片<br/>不限张数</View>
+          <View className='member-plan__benefit-text'>上传图片
+            <View className='member-plan__benefit-tip'>不限张数</View>
+          </View>
         </View>
       </View>
       <View className='member-plan__guide-title'>商品支付指南</View>

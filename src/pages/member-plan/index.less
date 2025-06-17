@@ -1,46 +1,46 @@
 .member-plan {
-  min-height: 100vh;
-  background: url('../../imgs/bg-birthday@3x.png') no-repeat center center / cover;
-  font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-  padding-bottom: 20px;
+  // min-height: 100vh;
+  // background: url('../../imgs/bg-birthday@3x.png') no-repeat center center / cover;
+  // font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  // padding-bottom: 20px;
 
   &__content {
     padding: 20px 16px;
   }
 
-  &__header {
-    display: flex;
-    align-items: center;
-    padding: 32px 0 16px 0;
-  }
+  // &__header {
+  //   display: flex;
+  //   align-items: center;
+  //   padding: 32px 0 16px 0;
+  // }
 
-  &__avatar-box {
-    margin-right: 12px;
-  }
+  // &__avatar-box {
+  //   margin-right: 12px;
+  // }
 
-  &__avatar {
-    width: 56px;
-    height: 56px;
-    border-radius: 50%;
-    background: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 32px;
-    box-shadow: 0 2px 8px #ececec;
-  }
+  // &__avatar {
+  //   width: 56px;
+  //   height: 56px;
+  //   border-radius: 50%;
+  //   background: #fff;
+  //   display: flex;
+  //   align-items: center;
+  //   justify-content: center;
+  //   font-size: 32px;
+  //   box-shadow: 0 2px 8px #ececec;
+  // }
 
-  &__userinfo {
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-  }
+  // &__userinfo {
+  //   display: flex;
+  //   flex-direction: column;
+  //   justify-content: center;
+  // }
 
-  &__nickname {
-    font-weight: bold;
-    font-size: 16px;
-    color: #222;
-  }
+  // &__nickname {
+  //   font-weight: bold;
+  //   font-size: 16px;
+  //   color: #222;
+  // }
 
   &__expire {
     font-size: 13px;
@@ -51,7 +51,7 @@
   &__cards {
     display: flex;
     margin: 0;
-    padding: 0 40px;
+    padding: 0 20px;
     overflow-x: auto;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
@@ -77,7 +77,7 @@
 
     &--selected {
       z-index: 2;
-      transform: scale(1.1);
+      // transform: scale(1.1);
     }
 
     &--year {
@@ -107,7 +107,7 @@
       background: url('../../imgs/member-year.png') no-repeat center center / cover;
 
       .member-plan__card-price {
-        color: #ffb43a;
+        color: #fee2ba;
       }
     }
 
@@ -131,7 +131,7 @@
   &__benefits {
     display: flex;
     justify-content: space-between;
-    margin-bottom: 18px;
+    margin-bottom: 36px;
   }
 
   &__benefit {
@@ -149,34 +149,34 @@
     color: #383838;
     line-height: 1.4;
   }
+  &__benefit-tip {
+    font-size: 14px;
+    color: #7A7A7A;
+    line-height: 1.4;
+  }
 
   &__guide-title {
-    font-size: 14px;
+    font-size: 16px;
     font-weight: bold;
-    margin-bottom: 6px;
-    color: #222;
+    margin: 0 20px;
+    color: #7A7A7A;
   }
 
   &__guide {
-    font-size: 12px;
-    color: #888;
-    background: #f3f3f3;
-    border-radius: 10px;
-    padding: 12px 14px;
-    margin-bottom: 18px;
+    font-size: 14px;
+    color: #7A7A7A;
+    margin: 0 20px;
     line-height: 1.7;
   }
 
   &__pay-btn {
-    width: 100%;
-    background: #222;
-    color: #ffb43a;
+    background: #383838;
+    color: #fcac39;
+    margin: 0 20px;
     font-size: 17px;
-    font-weight: bold;
-    border-radius: 24px;
-    margin-top: 8px;
-    height: 44px;
-    line-height: 44px;
+    border-radius: 20px;
+    height: 50px;
+    line-height: 50px;
     border: none;
   }
 }
