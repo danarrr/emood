@@ -1,0 +1,200 @@
+.mood {
+  // min-height: 100vh;
+  // background: url(@birthday-bg);
+  // background: url('../../imgs/bg@2x.png') no-repeat;
+  // background-size: 100%;
+  // background: #fafaf7 url('data:image/svg+xml;utf8,<svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg"><rect width="1" height="20" fill="%23fff"/><rect y="19" width="20" height="1" fill="%23fff"/></svg>');
+
+  font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
+  padding-bottom: 100px;
+  box-sizing: border-box;
+
+  &-swiper {
+    width: 100%;
+    height: 400px;
+    flex: 1;
+  }
+}
+
+.mood-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  padding: 80px 20px 0 20px;
+
+  &__date {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  &__month {
+    font-family: Alibaba PuHuiTi 2.0;
+    font-weight: 900;
+    font-size: 30px;
+    line-height: 100%;
+    letter-spacing: -0.3px;
+    background: url('../../imgs/pic-month.png') no-repeat;
+    background-size: 100% 15px;
+    background-position: bottom;
+  }
+  &__year {
+    // font-family: Alibaba PuHuiTi 2.0;
+    font-size: 20px;
+    color: #bdbdbd;
+  }
+}
+
+// .mood-greet {
+//   display: flex;
+//   align-items: flex-start;
+//   justify-content: space-between;
+//   margin: 24px 24px 0 24px;
+
+//   &__content {
+//     font-family: 'AlibabaPuHuiTi';
+//     flex: 1;
+//     // font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+//   }
+//   &__hello {
+//     font-size: 30px;
+//     font-weight: bold;
+//     color: #222;
+//     margin-bottom: 8px;
+//   }
+//   &__question {
+//     font-size: 24px;
+//     color: #222;
+//     font-weight: bold;
+//   }
+//   &__avatar-img {
+//     width: 76px;
+//     height: 76px;
+//   }
+// }
+
+
+
+.mood-emojis {
+  display: flex;
+  justify-content: space-between;
+  margin: 32px 24px 0 24px;
+
+  &__item {
+    font-size: 48px;
+    flex: 1;
+    text-align: center;
+  }
+}
+
+.mood-tabbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 45px;
+  height: 47px;
+  background: transparent;
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-around;
+  z-index: 10;
+
+  &__item {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &--center {
+      position: relative;
+      top: 17px;
+    }
+  }
+
+  &__icon {
+    font-size: 32px;
+    color: #444;
+    width: 24px;
+    height: 24px;
+  }
+
+  &__plus {
+    width: 47px;
+    height: 47px;
+    background: #383838;
+    color: #fff;
+    border-radius: 50%;
+    font-size: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 2px 12px #ececec;
+    border: 6px solid #fafaf7;
+  }
+}
+
+.mood-mask {
+  position: fixed;
+  left: 0;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0,0,0,0.1);
+  backdrop-filter: blur(5px);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+
+  &__content {
+    // background: #fff;
+    // border-radius: 32px 32px 0 0;
+    // width: 100vw;
+    // max-width: 480px;
+    // min-height: 260px;
+    // box-shadow: 0 -8px 32px #2222;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    // padding: 40px 0 32px 0;
+    // animation: moodMaskUp 0.22s cubic-bezier(.4,1.6,.6,1);
+  }
+
+  &__title {
+    font-size: 28px;
+    font-weight: bold;
+    color: #ffffff;
+    margin-bottom: 24px;
+    text-align: center;
+    position: relative;
+    &::after {
+      content: '';
+      display: block;
+      width: 80px;
+      height: 6px;
+      background: #ffb43a;
+      border-radius: 3px;
+      margin: 8px auto 0 auto;
+    }
+  }
+
+  &__emojis {
+    display: flex;
+    justify-content: center;
+    gap: 24px;
+    margin-top: 16px;
+  }
+
+  &__emoji {
+    font-size: 44px;
+    transition: transform 0.1s;
+    &:active {
+      transform: scale(1.2);
+    }
+  }
+}
+
+@keyframes moodMaskUp {
+  from { transform: translateY(100%); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}

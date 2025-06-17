@@ -1,0 +1,54 @@
+.user-profile {
+  display: flex;
+  align-items: center;
+  padding: 0 16px;
+  margin-bottom: 16px;
+  margin-top: 4px;
+
+  &__avatar-wrapper {
+    padding: 0;
+    background: none;
+    border: none;
+    line-height: normal;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px; /* Match avatar width */
+    height: 76px; /* Match avatar height */
+    border-radius: 50%; /* Match avatar border-radius */
+    overflow: hidden; /* Ensure avatar image is clipped to circle */
+    margin-right: 10px;
+    &:after {
+      border: none;
+    }
+  }
+
+  &__avatar {
+    width: 76px;
+    height: 76px;
+    border-radius: 50%;
+    // margin-right: 10px;
+    // background: #fff;
+    object-fit: cover;
+    border: 1px solid #eae9e2;
+  }
+
+  &__info {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+
+  &__nickname {
+    font-size: 16px;
+    font-weight: bold;
+    color: #383838;
+  }
+
+  &__vip-status {
+    font-size: 13px;
+    color: #888;
+    margin-top: 2px;
+  }
+} 

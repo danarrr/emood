@@ -1,0 +1,48 @@
+.greeting-container {
+  // width: 100%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  margin: 24px 24px 0 24px;
+
+}
+
+.greeting {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  // padding: 24px 24px 0 24px;
+  width: 100%;
+  box-sizing: border-box;
+
+  &__content {
+    flex: 1;
+  }
+
+  &__first-line {
+    font-size: 30px;
+    font-weight: bold;
+    color: #383838;
+    margin-bottom: 8px;
+  }
+
+  &__second-line {
+    font-size: 24px;
+    color: #383838;
+    font-weight: bold;
+  }
+
+  &__avatar {
+    &-img {
+      width: 76px;
+      height: 76px;
+    }
+  }
+}
+
+.divider {
+  height: 2px;
+  background: #7A7A7A;
+  margin: 18px 24px 0 24px;
+  border-radius: 2px;
+}
