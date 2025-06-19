@@ -1,5 +1,5 @@
 import { View, Button, Image, Input } from '@tarojs/components'
-import Taro from '@tarojs/taro'
+import Taro, { getStorageSync } from '@tarojs/taro'
 import { useState } from 'react'
 import './index.less'
 
@@ -18,8 +18,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
   onProfileChange,
   onEditClick
 }) => {
-  const [avatarUrl, setAvatarUrl] = useState(defaultAvatar);
-  const [nickName, setNickName] = useState(defaultNickname);
+  const avatarFromStorage = getStorageSync('avatarUrl');
+  const nameFromStorage = getStorageSync('nickName');
+
+  const [avatarUrl, setAvatarUrl] = useState(avatarFromStorage || defaultAvatar);
+  const [nickName, setNickName] = useState(nameFromStorage || defaultNickname);
 
   const onChooseAvatar = (e) => {
     const { avatarUrl } = e.detail;

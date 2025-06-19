@@ -17,22 +17,22 @@ export default function Setting() {
   };
 
   const settingItems = [
-    {
-      icon: IconAI,
-      text: 'AI 设置',
-      extraText: '慈祥老爷爷',
-      onClick: () => { /* TODO: Navigate to AI settings */ }
-    },
-    {
-      icon: IconSkin,
-      text: '我的皮肤',
-      onClick: () => { /* TODO: Navigate to My Skin */ }
-    },
-    {
-      icon: IconAccount,
-      text: '账户设置',
-      onClick: () => { /* TODO: Navigate to Account Settings */ }
-    },
+    // {
+    //   icon: IconAI,
+    //   text: 'AI 设置',
+    //   extraText: '慈祥老爷爷',
+    //   onClick: () => { /* TODO: Navigate to AI settings */ }
+    // },
+    // {
+    //   icon: IconSkin,
+    //   text: '我的皮肤',
+    //   onClick: () => { /* TODO: Navigate to My Skin */ }
+    // },
+    // {
+    //   icon: IconAccount,
+    //   text: '账户设置',
+    //   onClick: () => { /* TODO: Navigate to Account Settings */ }
+    // },
     {
       icon: IconService,
       text: '联系客服',

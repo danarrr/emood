@@ -2,11 +2,11 @@ import React from 'react';
 import { View, Text } from '@tarojs/components';
 import './index.less';
 
-const MoodCalendarSummary = () => {
+const MoodCalendarSummary = ({ month }: { month: number }) => {
   return (
     <View className="mood-calendar-summary-container">
       {/* Month Title */}
-      <View className="month-title">5月</View>
+      <View className="month-title">{month}月</View>
 
       {/* Calendar */}
       <View className="calendar">

@@ -4,11 +4,14 @@ import { useState, useEffect } from 'react'
 import PageHeader from '../../components/PageHeader'
 import IconCamera from '@imgs/icon-camera@2x.png'
 import IconTime from '@imgs/icon-time@2x.png'
+import IconPublish from '@imgs/icon-publish@2x.png'
 import './index.less'
 
 // 导入表情图片
 import happyEmoji from '@imgs/emoji/happy.png';
 import sadEmoji from '@imgs/emoji/sad.png';
+import test from '@imgs/emoji/happy.gif';
+
 
 // 表情映射表
 const emojiMap = {
@@ -76,53 +79,95 @@ export default function MoodDetail () {
   // 格式化日期显示
   const formatDate = () => {
     const { dateInfo } = moodState;
-    if (!dateInfo?.month || !dateInfo?.date) return '';
-    return `${dateInfo.month}月${dateInfo.date}日`;
+    if (!dateInfo?.month || !dateInfo?.date) return null;
+    
+    // 创建日期对象来计算周几
+    const date = new Date(Number(dateInfo.year), Number(dateInfo.month) - 1, Number(dateInfo.date));
+    const dayOfWeek = date.getDay();
+    
+    // 周几的英文数组
+    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const weekDay = weekDays[dayOfWeek];
+    
+    return { weekDay, dateText: `${dateInfo.month}月${dateInfo.date}日` };
   };
 
   // 选择图片
   const handleChooseImage = async () => {
-    // try {
+    // 检查是否已达到最大图片数量
+    if (images.length >= 11) {
+      Taro.showToast({
+        title: '最多只能上传11张图片',
+        icon: 'none'
+      });
+      return;
+    }
+
+    try {
       const res = await Taro.chooseImage({
-        count: 9, // 最多可以选择的图片张数
+        count: 11 - images.length, // 最多可以选择的图片张数
         sizeType: ['compressed'], // 所选的图片的尺寸
         sourceType: ['album', 'camera'], // 选择图片的来源
         success: function (chooseResult) {
           // 返回选定照片的本地文件路径列表，tempFilePath可以作为img标签的src属性显示图片
-          var tempFilePaths = res.tempFilePaths
-          console.log('上传结果122321', tempFilePaths)
-          // 将图片上传至云存储空间
-          Taro.cloud.uploadFile({
-            // 指定上传到的云路径
-            // cloudPath: 'my-photo.png', // @anitato 上传到统一路径
-            // 指定要上传的文件的小程序临时文件路径
-            filePath: chooseResult.tempFilePaths[0],
-            // 成功回调
-            success: res => {
-              console.log('上传成功', res)
-            },
-          })
+          var tempFilePaths = chooseResult.tempFilePaths
+          
+          // 批量上传图片
+          setUploading(true);
+          const uploadPromises = tempFilePaths.map((filePath, index) => {
+            return new Promise<string>((resolve, reject) => {
+              Taro.cloud.uploadFile({
+                cloudPath: `mood-images/${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}.jpg`,
+                filePath: filePath,
+                success: res => {
+                  console.log(`第${index + 1}张图片上传成功`, res);
+                  resolve(res.fileID);
+                },
+                fail: err => {
+                  console.log(`第${index + 1}张图片上传失败`, err);
+                  reject(err);
+                }
+              });
+            });
+          });
+
+          // 等待所有图片上传完成
+          Promise.all(uploadPromises)
+            .then(fileIDs => {
+              console.log('所有图片上传成功', fileIDs);
+              setImages(prev => [...prev, ...fileIDs]);
+              setUploading(false);
+            })
+            .catch(error => {
+              console.error('部分图片上传失败', error);
+              Taro.showToast({
+                title: '部分图片上传失败',
+                icon: 'none'
+              });
+              setUploading(false);
+            });
         }
       });
-
-    //   // 上传图片
-    //   setUploading(true);
-    //   const uploadTasks = res.tempFilePaths.map(filePath => uploadImage(filePath));
-    //   const uploadResults = await Promise.all(uploadTasks);
-    //   setImages(prev => [...prev, ...uploadResults]);
-    //   setUploading(false);
-    // } catch (error) {
-    //   console.error('选择图片失败:', error);
-    //   Taro.showToast({
-    //     title: '选择图片失败',
-    //     icon: 'none'
-    //   });
-    // }
+    } catch (error) {
+      console.error('选择图片失败:', error);
+      Taro.showToast({
+        title: '选择图片失败',
+        icon: 'none'
+      });
+    }
   };
 
   // 处理文本输入
   const handleContentChange = (e) => {
     setContent(e.detail.value);
+    
+    // 延迟执行滚动，确保内容更新后再滚动
+    setTimeout(() => {
+      const textarea = document.querySelector('.mood-detail__editor-textarea');
+      if (textarea) {
+        textarea.scrollTop = textarea.scrollHeight;
+      }
+    }, 100);
   };
 
   // 保存心情记录
@@ -182,31 +227,50 @@ export default function MoodDetail () {
       <View className='mood-detail__emojibox'>
         <Image 
           className='mood-detail__emojibox-img'
-          src={emojiMap[moodState.type]} 
+          // src={emojiMap[moodState.type]} 
+          src={test} 
           mode='aspectFit'
         />
         <View className='mood-detail__emojibox-text'>
           <Text>{emojiTextMap[moodState.type]}</Text>
         </View>
       </View>
-      <Text className='mood-detail__input-desc'>{formatDate()}</Text>
+      <Text className='mood-detail__input-desc'>
+        {(() => {
+          const dateInfo = formatDate();
+          if (!dateInfo) return '';
+          return (
+            <>
+              <Text className='mood-detail__weekday'>{dateInfo.weekDay}</Text>
+              <Text>{dateInfo.dateText}</Text>
+            </>
+          );
+        })()}
+      </Text>
       <View className='mood-detail__editor'>
-        <Textarea className='mood-detail__editor-textarea' placeholder='今天发生了什么呀~' value={content} onInput={handleContentChange} />
-        <View className='mood-detail__editor-footer'>
-          <View className='mood-detail__editor-actions'>
-            <Image 
-              className='mood-detail__editor-action-icon' 
-              src={IconCamera}
-              onClick={handleChooseImage}
-            />
-            <Image className='mood-detail__editor-action-icon' src={IconTime} />
-          </View>
-          <View className='mood-detail__editor-save-status'>
-            {uploading ? '上传中...' : '草稿自动保存'}
-          </View>
-        </View>
-        {/* 图片预览区域 */}
-        {images.length > 0 && (
+        <Textarea 
+          className='mood-detail__editor-textarea' 
+          placeholder='今天发生了什么呀~' 
+          value={content} 
+          onInput={handleContentChange}
+          onFocus={() => {
+            // 聚焦时滚动到底部
+            setTimeout(() => {
+              const textarea = document.querySelector('.mood-detail__editor-textarea');
+              if (textarea) {
+                textarea.scrollTop = textarea.scrollHeight;
+              }
+            }, 300);
+          }}
+          maxlength={-1}
+          autoHeight
+          showConfirmBar={false}
+          cursorSpacing={50}
+          adjustPosition={true}
+          holdKeyboard={true}
+        />
+         {/* 图片预览区域 */}
+         {images.length > 0 && (
           <View className='mood-detail__images'>
             {images.map((url, index) => (
               <View key={index} className='mood-detail__image-item'>
@@ -225,8 +289,25 @@ export default function MoodDetail () {
             ))}
           </View>
         )}
-        <View onClick={handleSave}>保存</View>
+        <View className='mood-detail__editor-footer'>
+          <View className='mood-detail__editor-actions'>
+            <Image 
+              className='mood-detail__editor-action-icon' 
+              src={IconCamera}
+              onClick={handleChooseImage}
+            />
+            <Image className='mood-detail__editor-action-icon' src={IconTime} />
+          </View>
+          <View className='mood-detail__editor-save-status'>
+            {uploading ? '上传中...' : '草稿自动保存'}
+          </View>
+        </View>
       </View>
+      <Image 
+        className='mood-detail__editor-save-button'
+        src={IconPublish}
+        onClick={handleSave}
+      />
     </View>
   )
 }
