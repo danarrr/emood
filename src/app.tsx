@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react'
 import { useLaunch } from '@tarojs/taro'
 import Taro from '@tarojs/taro'
 import { loginAndStore, isLoginValid } from './utils/login'
+import GlobalVibrateContainer from './hooks/useVibration'
 import './app.less'
 
 function App({ children }: PropsWithChildren<any>) {
@@ -13,6 +14,8 @@ function App({ children }: PropsWithChildren<any>) {
       env: 'prod-6glre6n1cad02d9f',
       traceUser: true,
     })
+
+      
 
     // 检查并执行登录
     const initLogin = async () => {
@@ -48,7 +51,11 @@ function App({ children }: PropsWithChildren<any>) {
     // });
   })
 
-  return children
+  return (
+    <GlobalVibrateContainer>
+      {children}
+    </GlobalVibrateContainer>
+  )
 }
 
 export default App

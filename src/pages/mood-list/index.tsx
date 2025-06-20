@@ -1,23 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro, { useLoad } from '@tarojs/taro';
-import PageHeader from '../../components/PageHeader';
+import PageHeader from '@components/PageHeader';
+
+import { emoji1Map } from '@imgs/emoji1/emoji1Map'; // 路径按实际调整
 import './index.less';
 
-// 导入表情图片 (你需要根据实际情况导入这些图片)
-import happyEmoji from '../../imgs/emoji/happy.png';
-import sadEmoji from '../../imgs/emoji/sad.png';
-import bad111Emoji from '../../imgs/emoji/bad111.png';
-import bad222Emoji from '../../imgs/emoji/bad222.png';
-import bad333Emoji from '../../imgs/emoji/bad333.png';
-
-const emojiMap = {
-  'happy': happyEmoji,
-  'sad': sadEmoji,
-  'bad111': bad111Emoji,
-  'bad222': bad222Emoji,
-  'bad333': bad333Emoji,
-};
 
 interface MoodRecordItem {
   _id: string;
@@ -45,11 +33,13 @@ export default function MoodList() {
 
   const getMoodList = async (year: number, month?: number) => {
     try {
+      const token = Taro.getStorageSync('authorization')?.token
       const result = await Taro.cloud.callContainer({
         path: '/mood/list',
         method: 'GET',
         header: {
           'X-WX-SERVICE': 'emh-platform-server',
+          'authorization': token
         },
         data: {
           year: '2025',
@@ -132,7 +122,7 @@ export default function MoodList() {
               <Text className='mood-list-item__more'>...</Text>
             </View>
             <View className='mood-list-item__card'>
-              <Image src={emojiMap[record.mood]} className='mood-list-item__emoji' />
+              <Image src={emoji1Map[record.mood]} className='mood-list-item__emoji' />
               <Text className='mood-list-item__content'>
                 {record.content}
               </Text>

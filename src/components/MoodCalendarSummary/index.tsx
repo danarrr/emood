@@ -1,8 +1,27 @@
-import React from 'react';
-import { View, Text } from '@tarojs/components';
+// import React from 'react';
+import { View, Text, Image } from '@tarojs/components';
+import { emoji1Map } from '@imgs/emoji1/emoji1Map';
 import './index.less';
 
-const MoodCalendarSummary = ({ month }: { month: number }) => {
+function getDaysInMonth(year: number, month: number) {
+  return new Date(year, month, 0).getDate();
+}
+
+const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, month: number, bookData: any }) => {
+  const daysInMonth = getDaysInMonth(year, month);
+
+  // 计算每周的天数
+  const weeks: number[][] = [];
+  let week: number[] = [];
+  for (let day = 1; day <= daysInMonth; day++) {
+    week.push(day);
+    if (week.length === 7 || day === daysInMonth) {
+      weeks.push(week);
+      week = [];
+    }
+  }
+
+
   return (
     <View className="mood-calendar-summary-container">
       {/* Month Title */}
@@ -10,70 +29,31 @@ const MoodCalendarSummary = ({ month }: { month: number }) => {
 
       {/* Calendar */}
       <View className="calendar">
-        {/* Weekday headers are not in the image, but week numbers are */}
-        {/* Week 1 */}
-        <View className="week">
-          <View className="week-number">第一周</View>
-          <View className="date-grid">
-            {/* Empty cells for days before 1st (assuming 1st is Thursday) */}
-            {[...Array(3)].map((_, i) => <View key={`empty1-${i}`} className="date-item"></View>)}
-            {[1, 2, 3, 4, 5, 6, 7].map(day => (
-              <View key={`day1-${day}`} className="date-item">
-                {day}
-                {[4, 5, 6, 7].includes(day) && <Text className="emoji">😐</Text>}
-              </View>
-            ))}
-          </View>
-        </View>
-        {/* Week 2 */}
-        <View className="week">
-           <View className="week-number">第二周</View>
-           <View className="date-grid">
-              {[8, 9, 10, 11, 12, 13, 14].map(day => (
-                <View key={`day2-${day}`} className="date-item">
-                  {day}
-                  {[8, 9, 12, 14].includes(day) && <Text className="emoji">😐</Text>}
-                </View>
-              ))}
-           </View>
-        </View>
-        {/* Week 3 */}
-        <View className="week">
-           <View className="week-number">第三周</View>
-           <View className="date-grid">
-              {[15, 16, 17, 18, 19, 20, 21].map(day => (
-                <View key={`day3-${day}`} className="date-item">
-                  {day}
-                </View>
-              ))}
-           </View>
-        </View>
-        {/* Week 4 */}
-        <View className="week">
-           <View className="week-number">第四周</View>
-           <View className="date-grid">
-              {[22, 23, 24, 25, 26, 27, 28].map(day => (
-                <View key={`day4-${day}`} className="date-item">
-                  {day}
-                  {[25, 27].includes(day) && <Text className="emoji">😐</Text>}
-                </View>
-              ))}
-           </View>
-        </View>
-         {/* Week 5 */}
-         <View className="week">
-            <View className="week-number">第五周</View>
+        {weeks.map((weekDays, weekIdx) => (
+          <View className="week" key={weekIdx}>
+            <View className="week-number">{`第${weekIdx + 1}周`}</View>
             <View className="date-grid">
-              {[29, 30, 31].map(day => (
-                <View key={`day5-${day}`} className="date-item">
-                   {day}
-                   {day === 31 && <Text className="emoji">😐</Text>}
+              {weekDays.map(day => (
+                <View key={`day-${day}`} className="date-item">
+                  {day}
+                  {bookData[day] && bookData[day].mood && (
+                    <Image
+                      className="emoji"
+                      src={emoji1Map[bookData[day].mood]}
+                      mode="aspectFit"
+                    />
+                  )}
                 </View>
               ))}
-              {/* Empty cells after 31st */}
-              {[...Array(7 - (31 - 28))].map((_, i) => <View key={`empty5-${i}`} className="date-item"></View>)} {/* Adjust number of empty cells */}
+              {/* 补齐最后一周的空格 */}
+              {weekIdx === weeks.length - 1 && weekDays.length < 7 &&
+                Array.from({ length: 7 - weekDays.length }).map((_, i) => (
+                  <View key={`empty-${i}`} className="date-item"></View>
+                ))
+              }
             </View>
-         </View>
+          </View>
+        ))}
       </View>
 
       {/* AI Summary */}

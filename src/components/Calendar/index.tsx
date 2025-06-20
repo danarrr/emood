@@ -1,29 +1,22 @@
+import Taro from '@tarojs/taro';
 import { View, Text, Image } from '@tarojs/components';
 import React from 'react';
+
+import { emoji1Map } from '@imgs/emoji1/emoji1Map'; // 路径按实际调整
+
 import './index.less'; // Assuming a corresponding less file
 
-// 导入表情图片
-import happyEmoji from '../../imgs/emoji/happy.png';
-import sadEmoji from '../../imgs/emoji/sad.png';
 
 // Define weekdays for the calendar header
 const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
-// 表情映射表
-const emojiMap = {
-  'happy': happyEmoji,
-  'sad': sadEmoji
-};
+
 
 interface CalendarProps {
   year: number;
   month: number; // Month number (1-12)
   emojiData?: { [key: string]: string }; // 修改类型定义，value 为表情图片名称
-  // 1: {
-  //   1: 'happy',
-  //   5: 'sad', // 没记录则直接不返回。
-  //   30: 'sad',
-  // },
+
 }
 
 const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {} }) => {
@@ -44,6 +37,12 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {} }) => {
   const numberOfDays = getDaysInMonth(year, month);
   const firstDayOfWeek = getFirstDayOfWeek(year, month);
 
+  const handleClick = (emojiSrc) => {
+    if (emojiSrc) {
+      Taro.navigateTo({ url: '/pages/mood-list/index?day=' });
+    }
+  };
+
   return (
     <View className='mood-calendar'>
         {weekdays.map((day, index) => (
@@ -56,12 +55,14 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {} }) => {
         {[...Array(numberOfDays)].map((_, index) => {
           const dayNumber = index + 1;
           let emojiSrc: string | null = null;
+          
           if (emojiData[dayNumber.toString()]) {
-            emojiSrc = emojiMap[emojiData[dayNumber.toString()]?.mood];
+            const emojiName = emojiData[dayNumber.toString()]?.mood
+            emojiSrc = emoji1Map[emojiName]
           }
           
           return (
-            <View key={dayNumber} className='mood-calendar__day'>
+            <View key={dayNumber} className='mood-calendar__day' onClick={emojiSrc ? handleClick : undefined}>
               {dayNumber}
               {emojiSrc && (
                 <Image 

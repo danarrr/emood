@@ -2,16 +2,16 @@ import Taro from '@tarojs/taro'
 
 // 登录信息接口
 interface LoginInfo {
-  userInfo: any
+  // userInfo: any
   token: string
-  timestamp: number
-  expires: number
+  // timestamp: number
+  // expires: number
 }
 
 // 获取登录信息
 export const getLoginInfo = (): LoginInfo | null => {
   try {
-    return Taro.getStorageSync('login_info')
+    return Taro.getStorageSync('authorization')
   } catch (error) {
     console.error('获取登录信息失败:', error)
     return null
@@ -21,7 +21,7 @@ export const getLoginInfo = (): LoginInfo | null => {
 // 设置登录信息
 export const setLoginInfo = (loginInfo: LoginInfo): void => {
   try {
-    Taro.setStorageSync('login_info', loginInfo)
+    Taro.setStorageSync('authorization', loginInfo)
   } catch (error) {
     console.error('存储登录信息失败:', error)
   }
@@ -63,12 +63,14 @@ export const getUserInfo = (): any => {
 
 // 执行登录并存储结果
 export const loginAndStore = async (): Promise<boolean> => {
+  const token = Taro.getStorageSync('authorization')?.token
   try {
     const res = await Taro.cloud.callContainer({
       path: '/login',
       method: 'GET',
       header: {
         'X-WX-SERVICE': 'emh-platform-server',
+        'authorization': token
       }
     })
 
@@ -76,10 +78,10 @@ export const loginAndStore = async (): Promise<boolean> => {
 
     if (res.statusCode === 200 && res.data) {
       setLoginInfo({
-        userInfo: res.data.userInfo,
+        // userInfo: res.data.userInfo,
         token: res.data.token,
-        timestamp: Date.now(),
-        expires: res.data.expires || Date.now() + 24 * 60 * 60 * 1000,
+        // timestamp: Date.now(),
+        // expires: res.data.expires || Date.now() + 24 * 60 * 60 * 1000,
       })
       console.log('登录信息已存储到本地')
       return true

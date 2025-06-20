@@ -8,21 +8,20 @@ import IconPublish from '@imgs/icon-publish@2x.png'
 import './index.less'
 
 // 导入表情图片
-import happyEmoji from '@imgs/emoji/happy.png';
-import sadEmoji from '@imgs/emoji/sad.png';
-import test from '@imgs/emoji/happy.gif';
-
-
-// 表情映射表
-const emojiMap = {
-  'happy': happyEmoji,
-  'sad': sadEmoji
-};
+// import test from '@imgs/emoji/happy.gif';
+import { emoji1Map } from '@imgs/emoji1/emoji1Map';
 
 // 表情文字映射
 const emojiTextMap = {
-  'happy': '非常好！',
-  'sad': '有点难过'
+  hao: '好',
+  henbang: '很棒',
+  yiban: '一般',
+  lei: '累',
+  xindong: '心动',
+  youyu: '忧郁',
+  shengqi: '生气',
+  pingjing: '平静',
+  jiaolv: '焦虑',
 };
 
 type MoodType = 'happy' | 'sad';
@@ -181,11 +180,13 @@ export default function MoodDetail () {
     }
 
     try {
+      const token = Taro.getStorageSync('authorization')?.token
       const result = await Taro.cloud.callContainer({
         path: '/mood/save', // 业务自定义路径和参数
         method: 'POST', // 根据业务选择对应方法
         header: {
           'X-WX-SERVICE': 'emh-platform-server',
+          'authorization': token
         },
         data: {
           year: Number(moodState.dateInfo?.year),
@@ -227,8 +228,8 @@ export default function MoodDetail () {
       <View className='mood-detail__emojibox'>
         <Image 
           className='mood-detail__emojibox-img'
-          // src={emojiMap[moodState.type]} 
-          src={test} 
+          src={emoji1Map[moodState.type]} 
+          // src={test} 
           mode='aspectFit'
         />
         <View className='mood-detail__emojibox-text'>

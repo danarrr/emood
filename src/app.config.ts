@@ -1,8 +1,7 @@
 export default defineAppConfig({
   pages: [
-    'pages/index/index',
-    'pages/mood-detail/index',
     'pages/mood/index',
+    'pages/mood-detail/index',
     'pages/mood-list/index',
     'pages/mood-book/index',
     'pages/member-plan/index',

@@ -5,21 +5,13 @@ import Turntable from './components/Turntable'
 import Calendar from '@components/Calendar'
 import Greeting from '@/components/Greeting'
 
-import avater from '../../imgs/face@2x-3.png'
-import usercenter from '../../imgs/icon-mine@2x.png'
-import book from '../../imgs/icon-god@2x.png'
+import avater from '@imgs/face@2x-3.png'
+import usercenter from '@imgs/icon-mine@2x.png'
+import book from '@imgs/icon-god@2x.png'
+import masktitle from '@imgs/pic-txt@2x.png';
 
-// 导入表情图片
-import happyEmoji from '../../imgs/emoji/happy.png';
-import sadEmoji from '../../imgs/emoji/sad.png';
 
 import './index.less'
-
-// 表情映射表
-const emojiMap = {
-  'happy': happyEmoji,
-  'sad': sadEmoji
-};
 
 // 定义情绪类型
 interface MoodEmoji {
@@ -36,9 +28,6 @@ const dialogueOptions = [
   // { hello: 'Hi!', question: 'How was your day?' },
 ];
 
-// Define weekdays for the calendar header
-const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
-
 export default function MoodRecord () {
   useLoad(() => {
     console.log('Page loaded.')
@@ -54,12 +43,14 @@ export default function MoodRecord () {
   const [moodEmojis, setMoodEmojis] = useState<MoodEmoji[]>([]);
 
   const getMoodList = async(data) => {
+    const token = Taro.getStorageSync('authorization')?.token
     return await Taro.cloud.callContainer({
       data,
       path: '/mood/list', // 填入业务自定义路径和参数，根目录，就是 / 
       method: 'GET', // 按照自己的业务开发，选择对应的方法
       header: {
         'X-WX-SERVICE': 'emh-platform-server', // xxx中填入服务名称（微信云托管 - 服务管理 - 服务列表 - 服务名称）
+        'authorization': token
       }
     })
   }
@@ -69,7 +60,7 @@ export default function MoodRecord () {
     try {
       // const data = await http.get<MoodEmoji[]>(API.mood.list);
       const result = await getMoodList({year: currentMonthInfo.year})
-      setMoodEmojis(result.data?.data[+currentMonthInfo.month]);
+      setMoodEmojis(result.data?.data);
     } catch (error) {
       // console.error('获取心情表情失败:', error);
       // // 设置默认值
@@ -128,7 +119,7 @@ export default function MoodRecord () {
           <Calendar 
             year={year} 
             month={month} 
-            emojiData={moodEmojis}
+            emojiData={moodEmojis[month]}
           />
         </SwiperItem>
       );
@@ -180,9 +171,9 @@ export default function MoodRecord () {
       {/* 蒙层弹窗 */}
       {showMask && (
         <View className='mood-mask' onClick={() => setShowMask(false)}>
+          <View ><Image  className='mood-mask__title' src={masktitle}/></View>
           <View className='mood-mask__content'>
-            <Turntable icons={[]} onSelect={sltMood =>{
-              console.log('????sltMood', sltMood)
+            <Turntable onSelect={sltMood =>{
               goTo('mood-detail', {
               mood: sltMood,
               date: JSON.stringify(currentMonthInfo) // 先序列化对象
@@ -195,7 +186,10 @@ export default function MoodRecord () {
         <View className='mood-tabbar__item' onClick={() => goTo('user-center')}>
           <Image className='mood-tabbar__icon' src={usercenter} />
         </View>
-        <View className='mood-tabbar__item mood-tabbar__item--center' onClick={() => setShowMask(true)}>
+        <View className='mood-tabbar__item mood-tabbar__item--center' onClick={() => {
+          Taro.vibrateShort()
+          setShowMask(true)}
+        }>
           <View className='mood-tabbar__plus'>＋</View>
         </View>
         <View

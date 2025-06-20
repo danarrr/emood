@@ -57,11 +57,13 @@ export const getValidToken = (): string | null => {
 // 刷新鉴权信息
 export const refreshAuth = async (): Promise<boolean> => {
   try {
+    const token = Taro.getStorageSync('authorization')?.token
     const authResult = await Taro.cloud.callContainer({
       path: '/auth/get',
       method: 'GET',
       header: {
         'X-WX-SERVICE': 'emh-platform-server',
+        'authorization': token
       },
     })
 

@@ -3,19 +3,20 @@ import { View, Image } from '@tarojs/components';
 import './index.less'; // Styles for the turntable
 
 // 导入表情图片
-import happyEmoji from '../../../../imgs/emoji/happy.png';
-import sadEmoji from '../../../../imgs/emoji/sad.png';
-import bad111Emoji from '../../../../imgs/emoji/bad111.png';
-import bad222Emoji from '../../../../imgs/emoji/bad222.png';
-import bad333Emoji from '../../../../imgs/emoji/bad333.png';
+import { emoji1Map } from '@imgs/emoji1/emoji1Map'
 
 // 表情配置
 const emojiConfig = [
-  { src: happyEmoji, name: 'happy', text: '开心' },
-  { src: sadEmoji, name: 'sad', text: '难过' },
-  { src: bad111Emoji, name: 'bad111', text: '生气' },
-  { src: bad222Emoji, name: 'bad222', text: '疲惫' },
-  { src: bad333Emoji, name: 'bad333', text: '烦躁' }
+  { src: emoji1Map.hao, name: 'hao', text: '好' },
+  { src: emoji1Map.henbang, name: 'henbang', text: '很棒' },
+  { src: emoji1Map.yiban, name: 'yiban', text: '一般' },
+  { src: emoji1Map.lei, name: 'lei', text: '累' },
+  { src: emoji1Map.xindong, name: 'xindong', text: '心动' },
+  { src: emoji1Map.youyu, name: 'youyu', text: '忧郁' },
+  { src: emoji1Map.shengqi, name: 'shengqi', text: '生气' },
+  { src: emoji1Map.pingjing, name: 'pingjing', text: '平静' },
+  { src: emoji1Map.jiaolv, name: 'jiaolv', text: '焦虑' },
+  // 如需 happy，可加: { src: emoji1Map.happy, name: 'happy', text: '开心' },
 ];
 
 interface TurntableProps {
@@ -34,6 +35,7 @@ export default function Turntable({ onSelect }: TurntableProps) {
   };
 
   const handleTouchMove = (e: any) => {
+ 
     if (isAnimating) return;
     
     const moveX = e.touches[0].clientX - touchStartX.current;
@@ -65,7 +67,7 @@ export default function Turntable({ onSelect }: TurntableProps) {
   const getEmojiPosition = (index: number) => {
     const baseAngle = (index * 360) / emojiConfig.length;
     const currentAngle = baseAngle + offset;
-    const radius = 80;
+    const radius = 100;
     const x = Math.cos((currentAngle * Math.PI) / 180) * radius;
     const y = Math.sin((currentAngle * Math.PI) / 180) * radius;
     return { x, y };

@@ -103,12 +103,28 @@
   top: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0,0,0,0.1);
-  backdrop-filter: blur(5px);
+  background: rgba(0,0,0,0.5);
+  // backdrop-filter: blur(5px);
   z-index: 100;
   display: flex;
   align-items: flex-end;
-  justify-content: center;
+  justify-content: flex-end;
+
+  // display: flex;
+  flex-direction: column;
+
+  &__title {
+    // width: 151px;
+    // height: 25px;
+ 
+    // text-align: center;
+    // margin-bottom: 30px;
+    margin-left: -90%;;
+    // imgage { 
+      width: 151px;
+      height: 25px;
+    // }
+  }
 
   &__content {
     // background: #fff;
@@ -125,23 +141,23 @@
     // animation: moodMaskUp 0.22s cubic-bezier(.4,1.6,.6,1);
   }
 
-  &__title {
-    font-size: 28px;
-    font-weight: bold;
-    color: #ffffff;
-    margin-bottom: 24px;
-    text-align: center;
-    position: relative;
-    &::after {
-      content: '';
-      display: block;
-      width: 80px;
-      height: 6px;
-      background: #ffb43a;
-      border-radius: 3px;
-      margin: 8px auto 0 auto;
-    }
-  }
+  // &__title {
+  //   font-size: 28px;
+  //   font-weight: bold;
+  //   color: #ffffff;
+  //   margin-bottom: 24px;
+  //   text-align: center;
+  //   position: relative;
+  //   &::after {
+  //     content: '';
+  //     display: block;
+  //     width: 80px;
+  //     height: 6px;
+  //     background: #ffb43a;
+  //     border-radius: 3px;
+  //     margin: 8px auto 0 auto;
+  //   }
+  // }
 
   &__emojis {
     display: flex;

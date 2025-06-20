@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
 
@@ -16,8 +16,41 @@ export default function BookFlip() {
   const [pairIndex, setPairIndex] = useState(5); // 当前左页索引
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipPercent, setFlipPercent] = useState(0);
+  const [currentYear, setCurrentYear] = useState(2025);
+  const [bookData, setBookData] = useState(null)
   const [flipDirection, setFlipDirection] = useState<'left' | 'right' | null>(null);
   const touchStartX = useRef(0);
+
+
+  const getMoodList = async(data) => {
+    const token = Taro.getStorageSync('authorization')?.token
+    return await Taro.cloud.callContainer({
+      data,
+      path: '/mood/list', // 填入业务自定义路径和参数，根目录，就是 / 
+      method: 'GET', // 按照自己的业务开发，选择对应的方法
+      header: {
+        'X-WX-SERVICE': 'emh-platform-server', // xxx中填入服务名称（微信云托管 - 服务管理 - 服务列表 - 服务名称）
+        'authorization': token
+      }
+    })
+  }
+
+  // 组件加载时获取情绪数据
+  useEffect(() => {
+    fetchMoodEmojis();
+  }, []);
+
+
+  // 获取情绪 emoji 数据
+  const fetchMoodEmojis = async () => {
+    try {
+      const result = await getMoodList({year: currentYear})
+      setBookData(result.data?.data);
+    } catch (error) {
+      console.error('获取心情表情失败:', error);
+    }
+   
+  };
 
   // 触摸开始
   const handleTouchStart = (e) => {
@@ -98,7 +131,7 @@ export default function BookFlip() {
       {/* <Text className="book-title">{pages[pairIndex + 1]?.title || ''}</Text> */}
       {/* <Text className="book-content">{pages[pairIndex + 1]?.content || ''}</Text> */}
       2222222
-      <MoodCalendarSummary month={pairIndex}/>
+      <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex} year={currentYear}/>
     </View>
   );
 
@@ -120,7 +153,7 @@ export default function BookFlip() {
           11111
           {/* <Text className="book-title">{pages[pairIndex + 3]?.title || ''}</Text> */}
           {/* <Text className="book-content">{pages[pairIndex + 3]?.content || ''}</Text> */}
-          <MoodCalendarSummary month={pairIndex+1}/>
+          <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex+1} year={currentYear}/>
         </View>
       );
     }
@@ -132,7 +165,7 @@ export default function BookFlip() {
     if (flipDirection === 'right') {
       return (
         <View className="book-page book-page-static book-page-left-static">
-          <MoodCalendarSummary month={pairIndex+1}/>
+          <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex+1} year={currentYear}/>
         </View>
       );
     }
