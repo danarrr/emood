@@ -5,6 +5,7 @@ import React from 'react';
 import { emoji1Map } from '@imgs/emoji1/emoji1Map'; // 路径按实际调整
 
 import './index.less'; // Assuming a corresponding less file
+import { MoodListData } from '@/store/moods';
 
 
 // Define weekdays for the calendar header
@@ -15,8 +16,7 @@ const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 interface CalendarProps {
   year: number;
   month: number; // Month number (1-12)
-  emojiData?: { [key: string]: string }; // 修改类型定义，value 为表情图片名称
-
+  emojiData: MoodListData; // 修改类型定义，value 为表情图片名称
 }
 
 const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {} }) => {

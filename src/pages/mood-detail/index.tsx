@@ -10,6 +10,9 @@ import './index.less'
 // 导入表情图片
 // import test from '@imgs/emoji/happy.gif';
 import { emoji1Map } from '@imgs/emoji1/emoji1Map';
+import { MOOD_TYPE } from '@/store/moods'
+import { useAppDispatch } from '@/store'
+import { getMoodListAction } from '@/store/moods/actions'
 
 // 表情文字映射
 const emojiTextMap = {
@@ -23,9 +26,6 @@ const emojiTextMap = {
   pingjing: '平静',
   jiaolv: '焦虑',
 };
-
-type MoodType = 'happy' | 'sad';
-
 interface DateInfo {
   year: string;
   month: string;
@@ -33,18 +33,20 @@ interface DateInfo {
 }
 
 export default function MoodDetail () {
+    const dispatch = useAppDispatch();
+  
   const router = useRouter();
-  const { mood: moodType = '', date } = router.params as { 
-    mood: MoodType; 
+  const { mood: MOOD_TYPE = '', date } = router.params as { 
+    mood: MOOD_TYPE; 
     date: string;
   };
 
   // 状态管理
   const [moodState, setMoodState] = useState<{
-    type: MoodType;
+    type: MOOD_TYPE;
     dateInfo: DateInfo | null;
   }>({
-    type: moodType,
+    type: MOOD_TYPE,
     dateInfo: null
   });
 
@@ -202,6 +204,8 @@ export default function MoodDetail () {
           title: '保存成功',
           icon: 'success'
         });
+
+        dispatch(getMoodListAction({data: {year: Number(moodState.dateInfo?.year)}, token}));
         setTimeout(() => {
           Taro.navigateBack();
         }, 1500);

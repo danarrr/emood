@@ -1,6 +1,8 @@
 import { View, Image, Swiper, SwiperItem } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
+import { useAppDispatch, useAppSelector } from '@/store'
+
 import Turntable from './components/Turntable'
 import Calendar from '@components/Calendar'
 import Greeting from '@/components/Greeting'
@@ -12,6 +14,8 @@ import masktitle from '@imgs/pic-txt@2x.png';
 
 
 import './index.less'
+import { DataStatus } from '@/store/interface'
+import { getMoodListAction } from '@/store/moods/actions'
 
 // 定义情绪类型
 interface MoodEmoji {
@@ -29,6 +33,9 @@ const dialogueOptions = [
 ];
 
 export default function MoodRecord () {
+
+  const dispatch = useAppDispatch();
+  const moodlist = useAppSelector((state) => state.mood.moodList);
   useLoad(() => {
     console.log('Page loaded.')
   })
@@ -40,43 +47,18 @@ export default function MoodRecord () {
     date: new Date().getDate() + '' // 当前日期
   });
   const [currentDialogue, setCurrentDialogue] = useState(dialogueOptions[0]);
-  const [moodEmojis, setMoodEmojis] = useState<MoodEmoji[]>([]);
 
   const getMoodList = async(data) => {
     const token = Taro.getStorageSync('authorization')?.token
-    return await Taro.cloud.callContainer({
-      data,
-      path: '/mood/list', // 填入业务自定义路径和参数，根目录，就是 / 
-      method: 'GET', // 按照自己的业务开发，选择对应的方法
-      header: {
-        'X-WX-SERVICE': 'emh-platform-server', // xxx中填入服务名称（微信云托管 - 服务管理 - 服务列表 - 服务名称）
-        'authorization': token
-      }
-    })
+    if (!token) {return};
+    dispatch(getMoodListAction({data, token}))
   }
-
-  // 获取情绪 emoji 数据
-  const fetchMoodEmojis = async () => {
-    try {
-      // const data = await http.get<MoodEmoji[]>(API.mood.list);
-      const result = await getMoodList({year: currentMonthInfo.year})
-      setMoodEmojis(result.data?.data);
-    } catch (error) {
-      // console.error('获取心情表情失败:', error);
-      // // 设置默认值
-      // setMoodEmojis([
-      //   { id: 1, emoji: '😊', name: '开心' },
-      //   { id: 2, emoji: '😢', name: '难过' },
-      //   { id: 3, emoji: '😡', name: '生气' },
-      //   { id: 4, emoji: '😴', name: '疲惫' },
-      // ]);
-    }
-   
-  };
 
   // 组件加载时获取情绪数据
   useEffect(() => {
-    fetchMoodEmojis();
+    if (moodlist.status === DataStatus.INITIAL) {
+      getMoodList({year: currentMonthInfo.year});
+    }
   }, []);
 
   const goTo = (route: string, data?: any) => {
@@ -119,7 +101,7 @@ export default function MoodRecord () {
           <Calendar 
             year={year} 
             month={month} 
-            emojiData={moodEmojis[month]}
+            emojiData={moodlist?.data? moodlist?.data[month] : {}}
           />
         </SwiperItem>
       );
@@ -148,7 +130,7 @@ export default function MoodRecord () {
       {/* <View className='mood-divider'></View> */}
       {/* emoji 选择 */}
       {/* <View className='mood-emojis'>
-        {Object.values(moodEmojis).map((emojiName) => (
+        {Object.values(moodlist).map((emojiName) => (
           <View  className='mood-emojis__item'>
             <Image 
               className='mood-emojis__img'

@@ -1,9 +1,29 @@
 import { PropsWithChildren } from 'react'
 import { useLaunch } from '@tarojs/taro'
+import { Provider } from 'react-redux';
+import store from './store';
 import Taro from '@tarojs/taro'
 import { loginAndStore, isLoginValid } from './utils/login'
 import GlobalVibrateContainer from './hooks/useVibration'
 import './app.less'
+
+if (typeof AbortController === 'undefined') {
+  class AbortController {
+    signal: any;
+    constructor() {
+      this.signal = {
+        aborted: false,
+        addEventListener: () => {},
+        removeEventListener: () => {},
+        dispatchEvent: () => false,
+      };
+    }
+    abort() {
+      this.signal.aborted = true;
+    }
+  }
+  (globalThis as any).AbortController = AbortController;
+}
 
 function App({ children }: PropsWithChildren<any>) {
   useLaunch(() => {
@@ -23,6 +43,10 @@ function App({ children }: PropsWithChildren<any>) {
         console.log('登录信息无效或过期，正在重新登录...')
         const success = await loginAndStore()
         if (success) {
+          // 登录成功后重新跳转大
+          Taro.reLaunch({
+            url: '/pages/mood/index'
+          });
           console.log('登录成功，信息已存储')
         } else {
           console.error('登录失败')
@@ -52,9 +76,12 @@ function App({ children }: PropsWithChildren<any>) {
   })
 
   return (
-    <GlobalVibrateContainer>
-      {children}
-    </GlobalVibrateContainer>
+    <Provider store={store}>
+      <GlobalVibrateContainer>
+        {children}
+      </GlobalVibrateContainer>
+    </Provider>
+    
   )
 }
 
