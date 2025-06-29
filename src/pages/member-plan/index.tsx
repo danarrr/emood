@@ -1,12 +1,13 @@
-import { View, Button, Image, Progress } from '@tarojs/components'
+import { View, Button, Image, Swiper, SwiperItem  } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
-import React, { useState, useRef, useEffect } from 'react'
-import IconSkin from '../../imgs/icon-cloth@2x.png'
-import IconAi from '../../imgs/icon-ai@2x.png'
-import IconImage from '../../imgs/icon-pic@2x.png'
+import { useState, useEffect } from 'react'
 
 import PageHeader from '@components/PageHeader';
 import UserProfile from '@components/UserProfile';
+
+import IconSkin from '@imgs/icon-cloth@2x.png'
+import IconAi from '@imgs/icon-ai@2x.png'
+import IconImage from '@imgs/icon-pic@2x.png'
 
 import './index.less'
 
@@ -20,68 +21,9 @@ export default function MemberPlan () {
   }
 
   const [activeIndex, setActiveIndex] = useState(0);
-  const cardsContainerRef = useRef<any>(null);
-  const cardRefs = useRef<(any)[]>([]);
 
   useEffect(() => {
-    const container = cardsContainerRef.current;
-    const cards = cardRefs.current;
-
-    if (!container || cards.length === 0) return;
-
-    const handleScroll = () => {
-      const containerVisibleCenter = container.scrollLeft + container.offsetWidth / 2;
-
-      let minDistance = Infinity;
-      let closestIndex = -1;
-
-      cards.forEach((card, index) => {
-        if (card) {
-          const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-          const distance = Math.abs(cardCenter - containerVisibleCenter);
-
-          if (distance < minDistance) {
-            minDistance = distance;
-            closestIndex = index;
-          }
-        }
-      });
-      if (closestIndex !== -1 && closestIndex !== activeIndex) {
-        setActiveIndex(closestIndex);
-      }
-    };
-
-    container.addEventListener('scroll', handleScroll);
-
-    const initialCheck = () => {
-      const containerVisibleCenter = container.scrollLeft + container.offsetWidth / 2;
-
-      let minDistance = Infinity;
-      let closestIndex = -1;
-
-      cards.forEach((card, index) => {
-        if (card) {
-          const cardCenter = card.offsetLeft + card.offsetWidth / 2;
-          const distance = Math.abs(cardCenter - containerVisibleCenter);
-
-          if (distance < minDistance) {
-            minDistance = distance;
-            closestIndex = index;
-          }
-        }
-      });
-       if (closestIndex !== -1) {
-           setActiveIndex(closestIndex);
-       }
-    };
-
-    const timeoutId = setTimeout(initialCheck, 0);
-
-    // return () => {
-    //   container.removeEventListener('scroll', handleScroll);
-    //   clearTimeout(timeoutId);
-    // };
-  }, [activeIndex]);
+  }, [activeIndex.toString()]);
 
   const handleProfileChange = (profile) => {
     console.log('Profile updated:', profile);
@@ -90,6 +32,14 @@ export default function MemberPlan () {
   const handleEditClick = () => {
     console.log('Edit clicked');
   };
+
+  const handlePayClick = () => {
+    Taro.showToast({
+      title: '正在施工中，需要添加客服：🌏danarrr',
+      icon: 'none', // 不显示图标
+      duration: 5000 // 显示时长，单位 ms
+    })
+  }
 
   return (
     <View className='member-plan'>
@@ -100,22 +50,29 @@ export default function MemberPlan () {
         onProfileChange={handleProfileChange}
         onEditClick={handleEditClick}
       />
-      <View className='member-plan__cards' ref={cardsContainerRef}>
+      <Swiper
+        className='member-plan__cards'
+        circular
+        nextMargin={'40px'}
+        indicatorDots={false}
+        current={activeIndex}
+        onChange={e => setActiveIndex(e.detail.current)}
+      >
         {[0, 1].map((_, index) => (
+          <SwiperItem key={index} >
             <View
-                key={index}
-                className={
-                    'member-plan__card' +
-                    (index === activeIndex ? ' member-plan__card--selected' : '') +
-                    (index === 0 ? ' member-plan__card--half' : ' member-plan__card--year')
-                }
-                ref={el => cardRefs.current[index] = el}
+              className={
+                'member-plan__card' +
+                (index !== activeIndex ? ' member-plan__card--not-selected' : '') +
+                (index === 0 ? ' member-plan__card--half' : ' member-plan__card--year')
+              }
             >
               <View className='member-plan__card-title'>{index === 0 ? '半年会员' : '年度会员'}</View>
               <View className='member-plan__card-price'>{index === 0 ? '￥59.9/半年' : '￥99.9/年'}</View>
             </View>
+          </SwiperItem>
         ))}
-      </View>
+      </Swiper>
       <View className='member-plan__benefits-title'>- 尊享会员3大权益 -</View>
       <View className='member-plan__benefits'>
         <View className='member-plan__benefit'>
@@ -146,7 +103,7 @@ export default function MemberPlan () {
         当前订阅费用将从您的 Apple帐户扣除。<br/>
         有关付款或退款的查询，请联系 Apple 客服。
       </View>
-      <Button className='member-plan__pay-btn'>立即支付</Button>
+      <Button className='member-plan__pay-btn' onClick={handlePayClick}>立即支付</Button>
     </View>
   )
 }

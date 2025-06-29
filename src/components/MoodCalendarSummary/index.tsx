@@ -1,6 +1,6 @@
-// import React from 'react';
 import { View, Text, Image } from '@tarojs/components';
-import { emoji1Map } from '@imgs/emoji1/emoji1Map';
+import { getEmojiMap } from '@utils/constants'
+
 import './index.less';
 
 function getDaysInMonth(year: number, month: number) {
@@ -9,6 +9,7 @@ function getDaysInMonth(year: number, month: number) {
 
 const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, month: number, bookData: any }) => {
   const daysInMonth = getDaysInMonth(year, month);
+  const emojiMap = getEmojiMap('emoji1')
 
   // 计算每周的天数
   const weeks: number[][] = [];
@@ -25,7 +26,7 @@ const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, mon
   return (
     <View className="mood-calendar-summary-container">
       {/* Month Title */}
-      <View className="month-title">{month}月</View>
+      <View className="month-title"><Text>{month}月</Text></View>
 
       {/* Calendar */}
       <View className="calendar">
@@ -33,18 +34,20 @@ const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, mon
           <View className="week" key={weekIdx}>
             <View className="week-number">{`第${weekIdx + 1}周`}</View>
             <View className="date-grid">
-              {weekDays.map(day => (
+              {weekDays.map(day => {
+                return (
                 <View key={`day-${day}`} className="date-item">
                   {day}
-                  {bookData[day] && bookData[day].mood && (
+                  {bookData[day] && bookData[day]?.mood && (
                     <Image
                       className="emoji"
-                      src={emoji1Map[bookData[day].mood]}
+                      src={emojiMap[bookData[+day]?.mood]?.src}
                       mode="aspectFit"
                     />
                   )}
                 </View>
-              ))}
+              )}
+              )}
               {/* 补齐最后一周的空格 */}
               {weekIdx === weeks.length - 1 && weekDays.length < 7 &&
                 Array.from({ length: 7 - weekDays.length }).map((_, i) => (

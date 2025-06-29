@@ -1,31 +1,35 @@
-import { View, Button, Image, Textarea, Text, Progress } from '@tarojs/components'
+import { View, Image, Textarea, Text } from '@tarojs/components'
 import Taro, { useLoad, useRouter } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
-import PageHeader from '../../components/PageHeader'
+import { useAppSelector, useAppDispatch } from '@/store'
+import { MOOD_TYPE } from '@/store/moods'
+import { getMoodListAction } from '@/store/moods/actions'
+
+import PageHeader from '@components/PageHeader'
+
 import IconCamera from '@imgs/icon-camera@2x.png'
 import IconTime from '@imgs/icon-time@2x.png'
 import IconPublish from '@imgs/icon-publish@2x.png'
-import './index.less'
+
 
 // 导入表情图片
-// import test from '@imgs/emoji/happy.gif';
-import { emoji1Map } from '@imgs/emoji1/emoji1Map';
-import { MOOD_TYPE } from '@/store/moods'
-import { useAppDispatch } from '@/store'
-import { getMoodListAction } from '@/store/moods/actions'
+import { getEmojiMap } from '@utils/constants';
 
-// 表情文字映射
-const emojiTextMap = {
-  hao: '好',
-  henbang: '很棒',
-  yiban: '一般',
-  lei: '累',
-  xindong: '心动',
-  youyu: '忧郁',
-  shengqi: '生气',
-  pingjing: '平静',
-  jiaolv: '焦虑',
-};
+
+import './index.less'
+
+// // 表情文字映射
+// const emojiTextMap = {
+//   hao: '好',
+//   henbang: '很棒',
+//   yiban: '一般',
+//   lei: '累',
+//   xindong: '心动',
+//   youyu: '忧郁',
+//   shengqi: '生气',
+//   pingjing: '平静',
+//   jiaolv: '焦虑',
+// };
 interface DateInfo {
   year: string;
   month: string;
@@ -33,13 +37,15 @@ interface DateInfo {
 }
 
 export default function MoodDetail () {
-    const dispatch = useAppDispatch();
-  
+  const dispatch = useAppDispatch();
+  const moodlist = useAppSelector((state) => state.mood.moodList);
   const router = useRouter();
   const { mood: MOOD_TYPE = '', date } = router.params as { 
     mood: MOOD_TYPE; 
     date: string;
   };
+
+  const emojiConfigMap = getEmojiMap('emoji1')
 
   // 状态管理
   const [moodState, setMoodState] = useState<{
@@ -63,11 +69,19 @@ export default function MoodDetail () {
           ...prev,
           dateInfo
         }));
+
+          const record = moodlist.data?.[+dateInfo.month]?.[+dateInfo.date];
+          if (record) {
+            if (record.mood) setMoodState(prev => ({ ...prev, type: record.mood }));
+            if (record.content) setContent(record.content);
+            if (record.imgs && Array.isArray(record.imgs)) setImages(record.imgs);
+          }
+        // })
       } catch (error) {
         console.error('Failed to parse date:', error);
       }
     }
-  }, [date]);
+  }, [date, moodlist]);
 
   useLoad(() => {
     console.log('Page loaded with state:', moodState);
@@ -76,7 +90,6 @@ export default function MoodDetail () {
   const goBack = () => {
     Taro.navigateBack();
   };
-
   // 格式化日期显示
   const formatDate = () => {
     const { dateInfo } = moodState;
@@ -105,7 +118,7 @@ export default function MoodDetail () {
     }
 
     try {
-      const res = await Taro.chooseImage({
+      await Taro.chooseImage({
         count: 11 - images.length, // 最多可以选择的图片张数
         sizeType: ['compressed'], // 所选的图片的尺寸
         sourceType: ['album', 'camera'], // 选择图片的来源
@@ -183,6 +196,7 @@ export default function MoodDetail () {
 
     try {
       const token = Taro.getStorageSync('authorization')?.token
+
       const result = await Taro.cloud.callContainer({
         path: '/mood/save', // 业务自定义路径和参数
         method: 'POST', // 根据业务选择对应方法
@@ -196,6 +210,8 @@ export default function MoodDetail () {
           day: Number(moodState.dateInfo?.date),
           mood: moodState.type,
           content,
+          // imgs: images.length ? images.join(',') : ''
+          imgs: 'cloud://prod-6glre6n1cad02d9f.7072-prod-6glre6n1cad02d9f-1363336642/mood-images/1750755219361_0_9fzigace9.jpg,cloud://prod-6glre6n1cad02d9f.7072-prod-6glre6n1cad02d9f-1363336642/mood-images/1750755219361_0_9fzigace9.jpg'
         }
       });
 
@@ -225,6 +241,7 @@ export default function MoodDetail () {
   const handleDeleteImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
+  console.log(emojiConfigMap[moodState.type], moodState.type)
 
   return (
     <View className='mood-detail'>
@@ -232,12 +249,12 @@ export default function MoodDetail () {
       <View className='mood-detail__emojibox'>
         <Image 
           className='mood-detail__emojibox-img'
-          src={emoji1Map[moodState.type]} 
-          // src={test} 
+          src={emojiConfigMap[moodState.type]?.src}
           mode='aspectFit'
         />
         <View className='mood-detail__emojibox-text'>
-          <Text>{emojiTextMap[moodState.type]}</Text>
+          {/* <Text>{emojiTextMap[moodState.type]}</Text> */}
+          <Text>测试测试待填充</Text>
         </View>
       </View>
       <Text className='mood-detail__input-desc'>
@@ -258,15 +275,15 @@ export default function MoodDetail () {
           placeholder='今天发生了什么呀~' 
           value={content} 
           onInput={handleContentChange}
-          onFocus={() => {
-            // 聚焦时滚动到底部
-            setTimeout(() => {
-              const textarea = document.querySelector('.mood-detail__editor-textarea');
-              if (textarea) {
-                textarea.scrollTop = textarea.scrollHeight;
-              }
-            }, 300);
-          }}
+          // onFocus={() => {
+          //   // 聚焦时滚动到底部
+          //   setTimeout(() => {
+          //     const textarea = document.querySelector('.mood-detail__editor-textarea');
+          //     if (textarea) {
+          //       textarea.scrollTop = textarea.scrollHeight;
+          //     }
+          //   }, 300);
+          // }}
           maxlength={-1}
           autoHeight
           showConfirmBar={false}

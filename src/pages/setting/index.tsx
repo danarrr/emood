@@ -1,14 +1,14 @@
-import React from 'react';
 import { View, Text, Image } from '@tarojs/components';
 import Taro from '@tarojs/taro';
-import PageHeader from '../../components/PageHeader';
-import './index.less';
+import PageHeader from '@components/PageHeader';
 
 // 导入图标资源
-import IconAI from '../../imgs/icon-ai@2x.png';
-import IconSkin from '../../imgs/icon-cloth@2x.png';
-import IconAccount from '../../imgs/icon-account@3x.png';
-import IconService from '../../imgs/icon-service@3x.png';
+// import IconAI from '@imgs/icon-ai@2x.png';
+// import IconSkin from '@imgs/imgs/icon-cloth@2x.png';
+// import IconAccount from '@imgs/imgs/icon-account@3x.png';
+import IconService from '@imgs/icon-service@3x.png';
+
+import './index.less';
 // import IconArrowRight from '../../imgs/icon-arrow-right.png'; // 假设有右箭头图标
 
 export default function Setting() {
@@ -49,11 +49,13 @@ export default function Setting() {
             <View className='setting-item__left'>
               <Image src={item.icon} className='setting-item__icon' mode='aspectFit' />
               <Text className='setting-item__text'>{item.text}</Text>
+              生日月
+              选中表情包。
             </View>
             <View className='setting-item__right'>
               {item.extraText && <Text className='setting-item__extra-text'>{item.extraText}</Text>}
               {/* <Image src={IconArrowRight} className='setting-item__arrow' mode='aspectFit' /> */}
-              >
+              
             </View>
           </View>
         ))}

@@ -1,46 +1,7 @@
 .member-plan {
-  // min-height: 100vh;
-  // background: url('../../imgs/bg-birthday@3x.png') no-repeat center center / cover;
-  // font-family: 'PingFang SC', 'Helvetica Neue', Arial, sans-serif;
-  // padding-bottom: 20px;
-
   &__content {
     padding: 20px 16px;
   }
-
-  // &__header {
-  //   display: flex;
-  //   align-items: center;
-  //   padding: 32px 0 16px 0;
-  // }
-
-  // &__avatar-box {
-  //   margin-right: 12px;
-  // }
-
-  // &__avatar {
-  //   width: 56px;
-  //   height: 56px;
-  //   border-radius: 50%;
-  //   background: #fff;
-  //   display: flex;
-  //   align-items: center;
-  //   justify-content: center;
-  //   font-size: 32px;
-  //   box-shadow: 0 2px 8px #ececec;
-  // }
-
-  // &__userinfo {
-  //   display: flex;
-  //   flex-direction: column;
-  //   justify-content: center;
-  // }
-
-  // &__nickname {
-  //   font-weight: bold;
-  //   font-size: 16px;
-  //   color: #222;
-  // }
 
   &__expire {
     font-size: 13px;
@@ -49,18 +10,10 @@
   }
 
   &__cards {
-    display: flex;
-    margin: 0;
+    height: 230px;
     padding: 0 20px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    -webkit-overflow-scrolling: touch;
-    &::-webkit-scrollbar {
-      display: none;
-    }
-    -ms-overflow-style: none;
-    scrollbar-width: none;
-    margin-bottom: 18px;
+    display: flex;
+
   }
 
   &__card {
@@ -75,31 +28,32 @@
     transform-origin: center center;
     scroll-snap-align: center;
 
-    &--selected {
-      z-index: 2;
-      // transform: scale(1.1);
+    &--not-selected {
+      transform: scale(0.9);
     }
 
     &--year {
       background: #222;
-      color: #fff;
+      color: #fee2ba;
     }
 
     &-title {
       font-size: 16px;
       font-weight: bold;
-      color: #383838;
-      margin: 40px 0 60px 60px;
+      padding: 40px 0 60px 60px;
     }
+
 
     &-price {
       font-size: 18px;
       color: #383838;
       font-weight: bold;
-      margin: 100px 0 70px 40px;
+      padding: 40px 0 50px 40px;
     }
 
+    
     &--half {
+      color: #383838;
       background: url('../../imgs/member-half.png') no-repeat center center / cover;
     }
 
@@ -158,18 +112,21 @@
   &__guide-title {
     font-size: 16px;
     font-weight: bold;
-    margin: 0 20px;
+    margin: 0 30px;
     color: #7A7A7A;
   }
 
   &__guide {
     font-size: 14px;
     color: #7A7A7A;
-    margin: 0 20px;
+    margin: 0 30px;
     line-height: 1.7;
   }
 
   &__pay-btn {
+    position: fixed;
+    width: -webkit-fill-available;
+    bottom: 30px;
     background: #383838;
     color: #fcac39;
     margin: 0 20px;

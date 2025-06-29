@@ -24,7 +24,7 @@ const Greeting: FC<GreetingProps> = ({ firstLine, secondLine, avatar }) => {
           )}
         </View>
       </View>
-        <View className='divider'></View>
+      <View className='divider'></View>
       </>
   )
 }

@@ -1,6 +1,8 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useRef, useEffect } from 'react';
 import { View, Text } from '@tarojs/components';
 import Taro from '@tarojs/taro';
+import { useAppSelector } from '@/store'
+import { MoodListMonthData } from '@/store/moods';
 
 import MoodCalendarSummary from '@components/MoodCalendarSummary';
 import PageHeader from '@components/PageHeader';
@@ -13,44 +15,22 @@ const pages = Array.from({ length: 10 }).map((_, i) => ({
 }));
 
 export default function BookFlip() {
-  const [pairIndex, setPairIndex] = useState(5); // 当前左页索引
+  const [pairIndex, setPairIndex] = useState(new Date().getMonth()+1); // 当前左页索引，默认当前月份
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipPercent, setFlipPercent] = useState(0);
   const [currentYear, setCurrentYear] = useState(2025);
-  const [bookData, setBookData] = useState(null)
+  const [bookData, setBookData] = useState<MoodListMonthData | null>(null);
   const [flipDirection, setFlipDirection] = useState<'left' | 'right' | null>(null);
   const touchStartX = useRef(0);
-
-
-  const getMoodList = async(data) => {
-    const token = Taro.getStorageSync('authorization')?.token
-    return await Taro.cloud.callContainer({
-      data,
-      path: '/mood/list', // 填入业务自定义路径和参数，根目录，就是 / 
-      method: 'GET', // 按照自己的业务开发，选择对应的方法
-      header: {
-        'X-WX-SERVICE': 'emh-platform-server', // xxx中填入服务名称（微信云托管 - 服务管理 - 服务列表 - 服务名称）
-        'authorization': token
-      }
-    })
-  }
+  const moodlist = useAppSelector((state) => state.mood.moodList);
 
   // 组件加载时获取情绪数据
   useEffect(() => {
-    fetchMoodEmojis();
-  }, []);
+    const result = moodlist.data
+    setBookData(result);
+  }, [moodlist]);
 
 
-  // 获取情绪 emoji 数据
-  const fetchMoodEmojis = async () => {
-    try {
-      const result = await getMoodList({year: currentYear})
-      setBookData(result.data?.data);
-    } catch (error) {
-      console.error('获取心情表情失败:', error);
-    }
-   
-  };
 
   // 触摸开始
   const handleTouchStart = (e) => {
@@ -115,9 +95,9 @@ export default function BookFlip() {
   // 左页翻动动画
   const getLeftPageStyle = () => {
     if (flipDirection === 'right') {
-      const deg = flipPercent * 180;
+      const deg = -180 + (flipPercent * 180);
       return {
-        transform: `rotateY(${180 + deg}deg)`,
+        transform: `rotateY(${180 +deg}deg)`,
         zIndex: 3,
         transition: isFlipping || Math.abs(flipPercent) === 1 ? 'transform 0.5s' : 'none',
       };
@@ -130,7 +110,7 @@ export default function BookFlip() {
     <View className='book-flip'>
       {/* <Text className="book-title">{pages[pairIndex + 1]?.title || ''}</Text> */}
       {/* <Text className="book-content">{pages[pairIndex + 1]?.content || ''}</Text> */}
-      2222222
+      {/* 2222222 */}
       <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex} year={currentYear}/>
     </View>
   );
@@ -149,8 +129,11 @@ export default function BookFlip() {
   const getStaticRightContent = () => {
     if (flipDirection === 'left') {
       return (
-        <View className="book-page book-page-static book-page-right-static">
-          11111
+        <View 
+          className="book-page book-page-static book-page-right-static"
+          // style={isFlipping? {background: `url(${imgPageBg}) right center / 200% 100% no-repeat`}: {}}
+        >
+          {/* 11111 */}
           {/* <Text className="book-title">{pages[pairIndex + 3]?.title || ''}</Text> */}
           {/* <Text className="book-content">{pages[pairIndex + 3]?.content || ''}</Text> */}
           <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex+1} year={currentYear}/>
@@ -164,7 +147,10 @@ export default function BookFlip() {
   const getStaticLeftContent = () => {
     if (flipDirection === 'right') {
       return (
-        <View className="book-page book-page-static book-page-left-static">
+        <View
+          className="book-page book-page-static book-page-left-static"
+          // style={isFlipping ? {background: `url(${imgPageBg}) left center / 200% 100% no-repeat`}: {}}
+        >
           <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex+1} year={currentYear}/>
         </View>
       );
@@ -204,7 +190,7 @@ export default function BookFlip() {
           {/* <View className="book-face book-face-back">{getRightBackContent()}</View> */}
         </View>
         {/* 绿色中轴线 */}
-        <View className="book-center-line" />
+        {/* <View className="book-center-line" /> */}
       </View>
     </View>
   );

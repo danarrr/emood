@@ -1,12 +1,12 @@
 import { View, Button, Image } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
-import './index.less'
-
-import IconMember from '../../imgs/pic-member@2x.png' 
-import IconSetting from '../../imgs/pic-setting@2x.png'
-
 import PageHeader from '@components/PageHeader';
 import UserProfile from '@components/UserProfile';
+
+import IconMember from '@imgs/pic-member@2x.png' 
+import IconSetting from '@imgs/pic-setting@2x.png'
+
+import './index.less'
 
 export default function UserCenter () {
   useLoad(() => {

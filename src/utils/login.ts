@@ -30,7 +30,7 @@ export const setLoginInfo = (loginInfo: LoginInfo): void => {
 // 清除登录信息
 export const clearLoginInfo = (): void => {
   try {
-    Taro.removeStorageSync('login_info')
+    Taro.removeStorageSync('authorization')
   } catch (error) {
     console.error('清除登录信息失败:', error)
   }
@@ -40,9 +40,9 @@ export const clearLoginInfo = (): void => {
 export const isLoginValid = (): boolean => {
   const loginInfo = getLoginInfo()
   if (!loginInfo) return false
-  
-  const now = Date.now()
-  return now < loginInfo.expires
+  return !!loginInfo;
+  // const now = Date.now()
+  // return now < loginInfo.expires
 }
 
 // 获取有效的登录token

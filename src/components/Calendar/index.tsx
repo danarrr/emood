@@ -1,26 +1,26 @@
 import Taro from '@tarojs/taro';
-import { View, Text, Image } from '@tarojs/components';
+import { View, Image } from '@tarojs/components';
 import React from 'react';
+import { MoodListData } from '@/store/moods';
 
-import { emoji1Map } from '@imgs/emoji1/emoji1Map'; // 路径按实际调整
+import { getEmojiMap } from '@/utils/constants';
 
 import './index.less'; // Assuming a corresponding less file
-import { MoodListData } from '@/store/moods';
 
 
 // Define weekdays for the calendar header
 const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 
-
 interface CalendarProps {
   year: number;
   month: number; // Month number (1-12)
   emojiData: MoodListData; // 修改类型定义，value 为表情图片名称
+  handleSltMood?: void
 }
 
-const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {} }) => {
-
+const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handleSltMood }) => {
+  const emojiMap = getEmojiMap('emoji1')
   // Helper to get number of days in a month
   const getDaysInMonth = (year: number, month: number): number => {
     // Month is 1-based for Date constructor when getting last day
@@ -37,12 +37,12 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {} }) => {
   const numberOfDays = getDaysInMonth(year, month);
   const firstDayOfWeek = getFirstDayOfWeek(year, month);
 
-  const handleClick = (emojiSrc) => {
-    if (emojiSrc) {
-      Taro.navigateTo({ url: '/pages/mood-list/index?day=' });
+  const goToMoodList = (hasRecord, dayNumber) => {
+    if (hasRecord) {
+      Taro.navigateTo({ url: `/pages/mood-list/index?day=${dayNumber}&month=${month}` });
     }
   };
-
+  
   return (
     <View className='mood-calendar'>
         {weekdays.map((day, index) => (
@@ -58,11 +58,13 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {} }) => {
           
           if (emojiData[dayNumber.toString()]) {
             const emojiName = emojiData[dayNumber.toString()]?.mood
-            emojiSrc = emoji1Map[emojiName]
+            emojiSrc = emojiMap[emojiName]?.src
           }
           
           return (
-            <View key={dayNumber} className='mood-calendar__day' onClick={emojiSrc ? handleClick : undefined}>
+            <View key={dayNumber} className='mood-calendar__day' onClick={emojiSrc ? () => goToMoodList(emojiSrc, dayNumber) : () => {handleSltMood({
+              year, month, date:dayNumber
+            })}}>
               {dayNumber}
               {emojiSrc && (
                 <Image 

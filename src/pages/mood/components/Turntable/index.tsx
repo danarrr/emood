@@ -1,23 +1,23 @@
-import React, { /* useEffect, */ useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { View, Image } from '@tarojs/components';
-import './index.less'; // Styles for the turntable
+import { getEmojiMap } from '@/utils/constants';
 
-// 导入表情图片
-import { emoji1Map } from '@imgs/emoji1/emoji1Map'
 
-// 表情配置
-const emojiConfig = [
-  { src: emoji1Map.hao, name: 'hao', text: '好' },
-  { src: emoji1Map.henbang, name: 'henbang', text: '很棒' },
-  { src: emoji1Map.yiban, name: 'yiban', text: '一般' },
-  { src: emoji1Map.lei, name: 'lei', text: '累' },
-  { src: emoji1Map.xindong, name: 'xindong', text: '心动' },
-  { src: emoji1Map.youyu, name: 'youyu', text: '忧郁' },
-  { src: emoji1Map.shengqi, name: 'shengqi', text: '生气' },
-  { src: emoji1Map.pingjing, name: 'pingjing', text: '平静' },
-  { src: emoji1Map.jiaolv, name: 'jiaolv', text: '焦虑' },
-  // 如需 happy，可加: { src: emoji1Map.happy, name: 'happy', text: '开心' },
-];
+import './index.less';
+
+
+// // 表情配置
+// const emojiConfig = [
+//   { src: domin + '/emoji2/a.png?' + sign, name: 'hao', text: '好' },
+//   { src: domin + '/emoji2/b.png?' + sign, name: 'henbang', text: '很棒' },
+//   { src: domin + '/emoji2/c.png?' + sign, name: 'yiban', text: '一般' },
+//   { src: domin + '/emoji2/d.png?' + sign, name: 'lei', text: '累' },
+//   { src: domin + '/emoji2/e.png?' + sign, name: 'xindong', text: '心动' },
+//   { src: domin + '/emoji2/f.png?' + sign, name: 'youyu', text: '忧郁' },
+//   { src: domin + '/emoji2/g.png?' + sign, name: 'shengqi', text: '生气' },
+//   { src: domin + '/emoji2/h.png?' + sign, name: 'pingjing', text: '平静' },
+//   { src: domin + '/emoji2/i.png?' + sign, name: 'jiaolv', text: '焦虑' },
+// ];
 
 interface TurntableProps {
   onSelect?: (moodType: string) => void;
@@ -28,11 +28,14 @@ export default function Turntable({ onSelect }: TurntableProps) {
   const touchStartX = useRef(0);
   const [offset, setOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const emojiConfig = Object.values(getEmojiMap('emoji1') || {})
 
   const handleTouchStart = (e: any) => {
     touchStartX.current = e.touches[0].clientX;
     setIsAnimating(false);
   };
+
+
 
   const handleTouchMove = (e: any) => {
  
@@ -90,7 +93,7 @@ export default function Turntable({ onSelect }: TurntableProps) {
               transform: `translate(${x}px, ${y}px)`,
               transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)' // 使用更平滑的贝塞尔曲线
             }}
-            onClick={() => handleSelect(emoji.name)}
+            onClick={() => handleSelect(emoji.key)}
           >
             <Image 
               className="icon-image"

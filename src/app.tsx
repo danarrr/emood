@@ -1,10 +1,14 @@
 import { PropsWithChildren } from 'react'
+import Taro from '@tarojs/taro'
 import { useLaunch } from '@tarojs/taro'
 import { Provider } from 'react-redux';
 import store from './store';
-import Taro from '@tarojs/taro'
 import { loginAndStore, isLoginValid } from './utils/login'
 import GlobalVibrateContainer from './hooks/useVibration'
+
+// import fontFaceBold from '@utils/font/AlibabaPuHuiTi-2-75-SemiBold.ttf'
+import fontFace from '@utils/font/AlibabaPuHuiTi-3-45-Light.ttf';
+
 import './app.less'
 
 if (typeof AbortController === 'undefined') {
@@ -60,9 +64,9 @@ function App({ children }: PropsWithChildren<any>) {
     initLogin()
     
     // Taro.loadFontFace({
-    //   family: 'AlibabaPuHuiTi',
+    //   family: 'AlibabaPuHuiTiBold',
     //   global: true,
-    //   source: 'url("@utils/font/AlibabaPuHuiTi-2-75-SemiBold.ttf")',  //此处需替换为真实字体地址
+    //   source: fontFaceBold,  //此处需替换为真实字体地址
     //   success(res) {
     //     console.log(res.status)
     //   },
@@ -73,6 +77,21 @@ function App({ children }: PropsWithChildren<any>) {
     //     console.log(res.status)
     //   }
     // });
+
+    Taro.loadFontFace({
+      family: 'AlibabaPuHuiTi',
+      global: true,
+      source: fontFace,  //此处需替换为真实字体地址
+      success(res) {
+        console.log(res.status)
+      },
+      fail: function (res) {
+        console.log(res.status)
+      },
+      complete: function (res) {
+        console.log(res.status)
+      }
+    });
   })
 
   return (

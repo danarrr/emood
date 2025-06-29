@@ -12,10 +12,12 @@ import usercenter from '@imgs/icon-mine@2x.png'
 import book from '@imgs/icon-god@2x.png'
 import masktitle from '@imgs/pic-txt@2x.png';
 
-
-import './index.less'
 import { DataStatus } from '@/store/interface'
 import { getMoodListAction } from '@/store/moods/actions'
+
+import { getBgImage } from '@utils/bg'
+
+import './index.less'
 
 // 定义情绪类型
 interface MoodEmoji {
@@ -24,13 +26,27 @@ interface MoodEmoji {
   name: string;
 }
 
+function getGreetingMsg() {
+  const now = new Date();
+  const hour = now.getHours();
+  const day = now.getDay(); // 0=周日, 5=周五
+  const month = now.getMonth() + 1; // 1-12
+
+  // BIRTHDAY_MONTH
+  if (month === 5) {
+    return { hello: '生日月快乐！', question: '祝你生日月开心每一天！' };
+  }
+  if (hour >= 20) {
+    return { hello: '夜深了~', question: '想和我说点啥？' };
+  }
+  if (day === 5) {
+    return { hello: 'Happy Friday!', question: '今晚过的开心吗' };
+  }
+  return { hello: 'Hello~', question: '今天过得怎样？' };
+}
+
 // Define possible dialogue options
-const dialogueOptions = [
-  { hello: 'Hello~', question: '今天过得怎样？' },
-  // Add more dialogue options here if needed
-  // { hello: '你好!', question: '有什么想分享的吗?' },
-  // { hello: 'Hi!', question: 'How was your day?' },
-];
+
 
 export default function MoodRecord () {
 
@@ -39,14 +55,16 @@ export default function MoodRecord () {
   useLoad(() => {
     console.log('Page loaded.')
   })
-  
   const [showMask, setShowMask] = useState(false)
   const [currentMonthInfo, setCurrentMonthInfo] = useState({ 
     month: new Date().getMonth() + 1 + '', // 当前月份（0-11，需要+1）
     year: new Date().getFullYear() + '', // 当前年份
     date: new Date().getDate() + '' // 当前日期
   });
-  const [currentDialogue, setCurrentDialogue] = useState(dialogueOptions[0]);
+  const [showMaskDate, setShowMaskDate] = useState(currentMonthInfo)
+  const [currentDialogue, setCurrentDialogue] = useState(getGreetingMsg());
+
+  const [bg, setBg] = useState(getBgImage())
 
   const getMoodList = async(data) => {
     const token = Taro.getStorageSync('authorization')?.token
@@ -77,6 +95,8 @@ export default function MoodRecord () {
     Taro.navigateTo({ url });
   }
 
+ 
+
   // 处理月份切换
   const handleMonthChange = (e) => {
     const { current } = e.detail;
@@ -101,6 +121,7 @@ export default function MoodRecord () {
           <Calendar 
             year={year} 
             month={month} 
+            handleSltMood={handleSetShowMaskDate}
             emojiData={moodlist?.data? moodlist?.data[month] : {}}
           />
         </SwiperItem>
@@ -110,9 +131,20 @@ export default function MoodRecord () {
     return items;
   }
 
+  const handleSetShowMaskDate = (date) => {
+    setShowMaskDate(date)
+    handleOpenSltMoodMask()
+  }
+
+  const handleOpenSltMoodMask = () => {
+    Taro.vibrateShort()
+    setShowMask(true)
+  }
+
   return (
-    <View className='mood'>
-      {/* 顶部栏 */}
+    // <View className='mood' style={{background: `url(${bg}) no-repeat center top / cover`}}>
+    <View className='mood'>  
+    {/* 顶部栏 */}
       <View className='mood-header'>
         <View className='mood-header__date'>
           <View className='mood-header__month'>
@@ -156,9 +188,10 @@ export default function MoodRecord () {
           <View ><Image  className='mood-mask__title' src={masktitle}/></View>
           <View className='mood-mask__content'>
             <Turntable onSelect={sltMood =>{
+              console.log('选中的', sltMood)
               goTo('mood-detail', {
               mood: sltMood,
-              date: JSON.stringify(currentMonthInfo) // 先序列化对象
+              date: JSON.stringify(showMaskDate) // 先序列化对象
             })}}></Turntable>
           </View>
         </View>
@@ -168,10 +201,7 @@ export default function MoodRecord () {
         <View className='mood-tabbar__item' onClick={() => goTo('user-center')}>
           <Image className='mood-tabbar__icon' src={usercenter} />
         </View>
-        <View className='mood-tabbar__item mood-tabbar__item--center' onClick={() => {
-          Taro.vibrateShort()
-          setShowMask(true)}
-        }>
+        <View className='mood-tabbar__item mood-tabbar__item--center' onClick={handleOpenSltMoodMask}>
           <View className='mood-tabbar__plus'>＋</View>
         </View>
         <View

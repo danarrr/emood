@@ -16,6 +16,7 @@ export enum MOOD_TYPE {
 
 export type MoodListData = {
   [key in string] : {
+    imgs: string;
     content: string
     dateStr: string
     mood: MOOD_TYPE
