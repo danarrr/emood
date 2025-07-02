@@ -1,5 +1,5 @@
 import { createAsyncThunk } from "@reduxjs/toolkit";
-import Taro from "@tarojs/taro";
+import { cloudRequest } from "@/utils/request";
 
 interface getMoodListPayload {
   data: {
@@ -11,13 +11,13 @@ interface getMoodListPayload {
 }
 
 export const getMoodListAction = createAsyncThunk('moodSlice/getMoodListAction', async ({data, token}: getMoodListPayload) => {
-  return await Taro.cloud.callContainer({
+  return await cloudRequest({
     data,
     path: '/mood/list',
     method: 'GET',
-    header: {
-      'X-WX-SERVICE': 'emh-platform-server',
-      'authorization': token
-    }
+    // header: {
+    //   'X-WX-SERVICE': 'emh-platform-server',
+    //   'authorization': token
+    // }
   });
 });

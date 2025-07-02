@@ -78,7 +78,6 @@ export const loginAndStore = async (): Promise<boolean> => {
 
     if (res.statusCode === 200 && res.data) {
       setLoginInfo({
-        // userInfo: res.data.userInfo,
         token: res.data.token,
         // timestamp: Date.now(),
         // expires: res.data.expires || Date.now() + 24 * 60 * 60 * 1000,

@@ -1,15 +1,13 @@
 import { PropsWithChildren } from 'react'
-import Taro from '@tarojs/taro'
-import { useLaunch } from '@tarojs/taro'
+import Taro, { useLaunch } from '@tarojs/taro'
 import { Provider } from 'react-redux';
 import store from './store';
 import { loginAndStore, isLoginValid } from './utils/login'
 import GlobalVibrateContainer from './hooks/useVibration'
 
-// import fontFaceBold from '@utils/font/AlibabaPuHuiTi-2-75-SemiBold.ttf'
-import fontFace from '@utils/font/AlibabaPuHuiTi-3-45-Light.ttf';
 
 import './app.less'
+
 
 if (typeof AbortController === 'undefined') {
   class AbortController {
@@ -30,6 +28,7 @@ if (typeof AbortController === 'undefined') {
 }
 
 function App({ children }: PropsWithChildren<any>) {
+
   useLaunch(() => {
     console.log('App launched.')
     
@@ -63,25 +62,25 @@ function App({ children }: PropsWithChildren<any>) {
     // 启动时执行登录
     initLogin()
     
-    // Taro.loadFontFace({
-    //   family: 'AlibabaPuHuiTiBold',
-    //   global: true,
-    //   source: fontFaceBold,  //此处需替换为真实字体地址
-    //   success(res) {
-    //     console.log(res.status)
-    //   },
-    //   fail: function (res) {
-    //     console.log(res.status)
-    //   },
-    //   complete: function (res) {
-    //     console.log(res.status)
-    //   }
-    // });
+    Taro.loadFontFace({
+      family: 'AlibabaPuHuiTiBold',
+      global: true,
+      source: 'https://prod-6glre6n1cad02d9f-1363336642.tcloudbaseapp.com/AlibabaPuHuiTi-2-75-SemiBold.ttf?sign=dfa5e8ffa02389bf8706b84336bbf137&t=1751296279',  //此处需替换为真实字体地址
+      success(res) {
+        console.log(res.status)
+      },
+      fail: function (res) {
+        console.log(res.status)
+      },
+      complete: function (res) {
+        console.log(res.status)
+      }
+    });
 
     Taro.loadFontFace({
       family: 'AlibabaPuHuiTi',
       global: true,
-      source: fontFace,  //此处需替换为真实字体地址
+      source: 'https://prod-6glre6n1cad02d9f-1363336642.tcloudbaseapp.com/AlibabaPuHuiTi-3-45-Light.ttf?sign=833194c25e80451833b1b2667bef5684&t=1751296309',  //此处需替换为真实字体地址
       success(res) {
         console.log(res.status)
       },
@@ -93,7 +92,6 @@ function App({ children }: PropsWithChildren<any>) {
       }
     });
   })
-
   return (
     <Provider store={store}>
       <GlobalVibrateContainer>

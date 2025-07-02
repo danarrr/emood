@@ -39,7 +39,7 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handle
 
   const goToMoodList = (hasRecord, dayNumber) => {
     if (hasRecord) {
-      Taro.navigateTo({ url: `/pages/mood-list/index?day=${dayNumber}&month=${month}` });
+      Taro.navigateTo({ url: `/pages/mood-list/index?day=${dayNumber}&month=${month}&year=${year}` });
     }
   };
   

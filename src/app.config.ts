@@ -3,12 +3,20 @@ export default defineAppConfig({
     'pages/mood/index',
     'pages/mood-detail/index',
     'pages/mood-list/index',
-    'pages/mood-book/index',
     'pages/member-plan/index',
     'pages/user-center/index',
     'pages/emoji-list/index',
     'pages/setting/index',
     'pages/identity/index',
+  ],
+  subpackages: [
+    {
+      root: 'subpackages/packageMbook',
+      pages: [
+        'mood-book/index', // 分包页面
+      ]
+    }
+    // 可以有多个分包
   ],
   window: {
     backgroundTextStyle: 'light',

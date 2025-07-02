@@ -1,21 +1,21 @@
 import { View, Image, Swiper, SwiperItem } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAppDispatch, useAppSelector } from '@/store'
+
+import { DataStatus } from '@/store/interface'
+import { getMoodListAction } from '@/store/moods/actions'
 
 import Turntable from './components/Turntable'
 import Calendar from '@components/Calendar'
 import Greeting from '@/components/Greeting'
 
+import { getFestivalBgImage, getGreetingTxt } from '@/utils/festivalSetting'
+
 import avater from '@imgs/face@2x-3.png'
 import usercenter from '@imgs/icon-mine@2x.png'
 import book from '@imgs/icon-god@2x.png'
 import masktitle from '@imgs/pic-txt@2x.png';
-
-import { DataStatus } from '@/store/interface'
-import { getMoodListAction } from '@/store/moods/actions'
-
-import { getBgImage } from '@utils/bg'
 
 import './index.less'
 
@@ -26,35 +26,15 @@ interface MoodEmoji {
   name: string;
 }
 
-function getGreetingMsg() {
-  const now = new Date();
-  const hour = now.getHours();
-  const day = now.getDay(); // 0=周日, 5=周五
-  const month = now.getMonth() + 1; // 1-12
-
-  // BIRTHDAY_MONTH
-  if (month === 5) {
-    return { hello: '生日月快乐！', question: '祝你生日月开心每一天！' };
-  }
-  if (hour >= 20) {
-    return { hello: '夜深了~', question: '想和我说点啥？' };
-  }
-  if (day === 5) {
-    return { hello: 'Happy Friday!', question: '今晚过的开心吗' };
-  }
-  return { hello: 'Hello~', question: '今天过得怎样？' };
-}
-
-// Define possible dialogue options
-
 
 export default function MoodRecord () {
-
   const dispatch = useAppDispatch();
   const moodlist = useAppSelector((state) => state.mood.moodList);
   useLoad(() => {
     console.log('Page loaded.')
   })
+
+  const turntableRef = useRef();
   const [showMask, setShowMask] = useState(false)
   const [currentMonthInfo, setCurrentMonthInfo] = useState({ 
     month: new Date().getMonth() + 1 + '', // 当前月份（0-11，需要+1）
@@ -62,9 +42,8 @@ export default function MoodRecord () {
     date: new Date().getDate() + '' // 当前日期
   });
   const [showMaskDate, setShowMaskDate] = useState(currentMonthInfo)
-  const [currentDialogue, setCurrentDialogue] = useState(getGreetingMsg());
+  const [currentDialogue, setCurrentDialogue] = useState(getGreetingTxt());
 
-  const [bg, setBg] = useState(getBgImage())
 
   const getMoodList = async(data) => {
     const token = Taro.getStorageSync('authorization')?.token
@@ -80,8 +59,11 @@ export default function MoodRecord () {
   }, []);
 
   const goTo = (route: string, data?: any) => {
+    Taro.vibrateShort({
+      type: 'light'
+    });
     const url = data 
-      ? `/pages/${route}/index?${Object.entries(data)
+      ? `${route}?${Object.entries(data)
           .map(([key, value]) => {
             // 如果值是对象，需要先序列化
             const paramValue = typeof value === 'object' 
@@ -90,12 +72,19 @@ export default function MoodRecord () {
             return `${key}=${paramValue}`;
           })
           .join('&')}`
-      : `/pages/${route}/index`;
+      : route;
       
     Taro.navigateTo({ url });
   }
 
- 
+  const handleMaskTouchMove = (e) => {
+    // 调用子组件方法
+    turntableRef.current?.handleTouchMove(e);
+  };
+
+  const handleMaskTouchStart = (e) => {
+    turntableRef.current?.handleTouchStart(e);
+  }
 
   // 处理月份切换
   const handleMonthChange = (e) => {
@@ -142,15 +131,14 @@ export default function MoodRecord () {
   }
 
   return (
-    // <View className='mood' style={{background: `url(${bg}) no-repeat center top / cover`}}>
-    <View className='mood'>  
+    <View className='mood' style={{background: `url(${getFestivalBgImage()}) no-repeat center top / cover`}}>  
     {/* 顶部栏 */}
       <View className='mood-header'>
         <View className='mood-header__date'>
           <View className='mood-header__month'>
             {currentMonthInfo.month}月
           </View>
-          <View className='mood-header__year'>{currentMonthInfo.year}</View>
+          <View className='mood-header__year'>{currentMonthInfo.year}年</View>
         </View>
       </View>
       {/* 问候和头像 */}
@@ -184,21 +172,28 @@ export default function MoodRecord () {
       
       {/* 蒙层弹窗 */}
       {showMask && (
-        <View className='mood-mask' onClick={() => setShowMask(false)}>
-          <View ><Image  className='mood-mask__title' src={masktitle}/></View>
+        <View className='mood-mask'
+          // catchTouchMove
+          onClick={() => setShowMask(false)} 
+          onTouchMove={handleMaskTouchMove}
+          onTouchStart={handleMaskTouchStart}
+        >
+          <View><Image className='mood-mask__title' src={masktitle}/></View>
           <View className='mood-mask__content'>
-            <Turntable onSelect={sltMood =>{
-              console.log('选中的', sltMood)
-              goTo('mood-detail', {
-              mood: sltMood,
-              date: JSON.stringify(showMaskDate) // 先序列化对象
-            })}}></Turntable>
+            <Turntable 
+              ref={turntableRef}
+              onSelect={sltMood =>{
+                goTo('/pages/mood-detail/index', {
+                mood: sltMood,
+                date: JSON.stringify(showMaskDate) // 先序列化对象
+              })}}
+            ></Turntable>
           </View>
         </View>
       )}
       {/* 底部导航 */}
       <View className='mood-tabbar'>
-        <View className='mood-tabbar__item' onClick={() => goTo('user-center')}>
+        <View className='mood-tabbar__item' onClick={() => goTo('/pages/user-center/index')}>
           <Image className='mood-tabbar__icon' src={usercenter} />
         </View>
         <View className='mood-tabbar__item mood-tabbar__item--center' onClick={handleOpenSltMoodMask}>
@@ -206,7 +201,7 @@ export default function MoodRecord () {
         </View>
         <View
           className='mood-tabbar__item'
-          onClick={() => goTo('mood-book')}
+          onClick={() => goTo('/subpackages/packageMbook/mood-book/index')}
         >
           <Image className='mood-tabbar__icon' src={book} />
         </View>

@@ -1,58 +1,50 @@
 import { View, Image, Textarea, Text } from '@tarojs/components'
-import Taro, { useLoad, useRouter } from '@tarojs/taro'
+import Taro, { useRouter } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store'
-import { MOOD_TYPE } from '@/store/moods'
 import { getMoodListAction } from '@/store/moods/actions'
 
 import PageHeader from '@components/PageHeader'
+import { getFestivalBgImage } from '@/utils/festivalSetting'
+
 
 import IconCamera from '@imgs/icon-camera@2x.png'
-import IconTime from '@imgs/icon-time@2x.png'
+// import IconTime from '@imgs/icon-time@2x.png'
 import IconPublish from '@imgs/icon-publish@2x.png'
 
 
 // 导入表情图片
 import { getEmojiMap } from '@utils/constants';
+import { cloudRequest } from '@/utils/request'
 
 
 import './index.less'
 
-// // 表情文字映射
-// const emojiTextMap = {
-//   hao: '好',
-//   henbang: '很棒',
-//   yiban: '一般',
-//   lei: '累',
-//   xindong: '心动',
-//   youyu: '忧郁',
-//   shengqi: '生气',
-//   pingjing: '平静',
-//   jiaolv: '焦虑',
-// };
 interface DateInfo {
   year: string;
   month: string;
   date: string;
 }
 
+type MoodState = {
+  type: keyof ReturnType<typeof getEmojiMap> | null;
+  dateInfo: DateInfo | null;
+}
+
 export default function MoodDetail () {
+  const emojiConfigMap = getEmojiMap('emoji1') || {};
   const dispatch = useAppDispatch();
   const moodlist = useAppSelector((state) => state.mood.moodList);
   const router = useRouter();
-  const { mood: MOOD_TYPE = '', date } = router.params as { 
-    mood: MOOD_TYPE; 
+  const { mood, date } = router.params as {
+    mood: keyof typeof emojiConfigMap;
     date: string;
   };
 
-  const emojiConfigMap = getEmojiMap('emoji1')
+  const initialMood = (mood && emojiConfigMap[mood] ? mood : (Object.keys(emojiConfigMap)[0] || null)) as keyof typeof emojiConfigMap | null;
 
-  // 状态管理
-  const [moodState, setMoodState] = useState<{
-    type: MOOD_TYPE;
-    dateInfo: DateInfo | null;
-  }>({
-    type: MOOD_TYPE,
+  const [moodState, setMoodState] = useState<MoodState>({
+    type: initialMood,
     dateInfo: null
   });
 
@@ -83,13 +75,20 @@ export default function MoodDetail () {
     }
   }, [date, moodlist]);
 
-  useLoad(() => {
-    console.log('Page loaded with state:', moodState);
-  });
+  const handleChangeEmoji = () => {
+    const emojiKeys = Object.keys(emojiConfigMap);
+    if (emojiKeys.length === 0 || !moodState.type) return;
 
-  const goBack = () => {
-    Taro.navigateBack();
+    const currentIndex = emojiKeys.indexOf(moodState.type);
+    const nextIndex = (currentIndex + 1) % emojiKeys.length;
+    const nextMoodType = emojiKeys[nextIndex] as keyof typeof emojiConfigMap;
+
+    setMoodState(prev => ({
+      ...prev,
+      type: nextMoodType
+    }));
   };
+
   // 格式化日期显示
   const formatDate = () => {
     const { dateInfo } = moodState;
@@ -100,7 +99,7 @@ export default function MoodDetail () {
     const dayOfWeek = date.getDay();
     
     // 周几的英文数组
-    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+    const weekDays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat'];
     const weekDay = weekDays[dayOfWeek];
     
     return { weekDay, dateText: `${dateInfo.month}月${dateInfo.date}日` };
@@ -186,6 +185,7 @@ export default function MoodDetail () {
 
   // 保存心情记录
   const handleSave = async () => {
+    Taro.vibrateShort({ type: 'light' });
     if (!content.trim()) {
       Taro.showToast({
         title: '请输入内容',
@@ -195,15 +195,10 @@ export default function MoodDetail () {
     }
 
     try {
-      const token = Taro.getStorageSync('authorization')?.token
 
-      const result = await Taro.cloud.callContainer({
+      const result = await cloudRequest({
         path: '/mood/save', // 业务自定义路径和参数
         method: 'POST', // 根据业务选择对应方法
-        header: {
-          'X-WX-SERVICE': 'emh-platform-server',
-          'authorization': token
-        },
         data: {
           year: Number(moodState.dateInfo?.year),
           month: Number(moodState.dateInfo?.month),
@@ -218,7 +213,6 @@ export default function MoodDetail () {
       if (result.statusCode === 200) {
         Taro.showToast({
           title: '保存成功',
-          icon: 'success'
         });
 
         dispatch(getMoodListAction({data: {year: Number(moodState.dateInfo?.year)}, token}));
@@ -241,20 +235,19 @@ export default function MoodDetail () {
   const handleDeleteImage = (index: number) => {
     setImages(prev => prev.filter((_, i) => i !== index));
   };
-  console.log(emojiConfigMap[moodState.type], moodState.type)
 
   return (
-    <View className='mood-detail'>
-      <PageHeader goBack={goBack} title='记录' />
+    <View className='mood-detail'  style={{background: `url(${getFestivalBgImage()}) no-repeat center top / cover`}}>
+      <PageHeader title='记录' />
       <View className='mood-detail__emojibox'>
-        <Image 
+        <Image
           className='mood-detail__emojibox-img'
-          src={emojiConfigMap[moodState.type]?.src}
+          src={moodState.type ? emojiConfigMap[moodState.type]?.src : ''}
           mode='aspectFit'
+          onClick={handleChangeEmoji}
         />
         <View className='mood-detail__emojibox-text'>
-          {/* <Text>{emojiTextMap[moodState.type]}</Text> */}
-          <Text>测试测试待填充</Text>
+          <Text>{moodState.type ? emojiConfigMap[moodState.type]?.text : ''}</Text>
         </View>
       </View>
       <Text className='mood-detail__input-desc'>
@@ -318,10 +311,10 @@ export default function MoodDetail () {
               src={IconCamera}
               onClick={handleChooseImage}
             />
-            <Image className='mood-detail__editor-action-icon' src={IconTime} />
+            {/* <Image className='mood-detail__editor-action-icon' src={IconTime} /> */}
           </View>
           <View className='mood-detail__editor-save-status'>
-            {uploading ? '上传中...' : '草稿自动保存'}
+            {uploading ? '上传中...' : ''}
           </View>
         </View>
       </View>
