@@ -5,6 +5,7 @@ import { useAppDispatch, useAppSelector } from '@/store'
 
 import { DataStatus } from '@/store/interface'
 import { getMoodListAction } from '@/store/moods/actions'
+import { getUserInfoAction } from '@/store/user/actions'
 
 import Turntable from './components/Turntable'
 import Calendar from '@components/Calendar'
@@ -44,15 +45,19 @@ export default function MoodRecord () {
   const [showMaskDate, setShowMaskDate] = useState(currentMonthInfo)
   const [currentDialogue, setCurrentDialogue] = useState(getGreetingTxt());
 
-
+  const getUserInfo = async() => {
+    dispatch(getUserInfoAction())
+  }
   const getMoodList = async(data) => {
     const token = Taro.getStorageSync('authorization')?.token
     if (!token) {return};
     dispatch(getMoodListAction({data, token}))
   }
+  
 
   // 组件加载时获取情绪数据
   useEffect(() => {
+    getUserInfo();
     if (moodlist.status === DataStatus.INITIAL) {
       getMoodList({year: currentMonthInfo.year});
     }

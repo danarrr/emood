@@ -1,11 +1,14 @@
 import { View, Image, Text } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
+import { useAppSelector } from '@/store';
 import PageHeader from '@components/PageHeader'
 import Greeting from '@components/Greeting'
 import { domin, sign } from '@/utils/constants';
+import { cloudRequest } from '@/utils/request'
 
 import './index.less'
+
 
 const catList = [
   { key:'all', name: '大人不做选择', desc: '这里是一段表情包的简介，这里是一段表情包的简介。' },
@@ -20,6 +23,9 @@ const catList = [
 export default function EmojiList () {
   const [showModal, setShowModal] = useState(false)
   const [modalCat, setModalCat] = useState<any[]>([])
+  const [modalItem, setModalItem] = useState('');
+  const [hasSkinList, setSkinList] = useState(null)
+  const userInfo = useAppSelector((state) => state.user.userInfo?.data);
 
   const handleShowModal = (item) => {
     // 生成 a-i 的 9 个表情
@@ -31,11 +37,37 @@ export default function EmojiList () {
       }
     })
     setModalCat(arr)
+    setModalItem(item)
     setShowModal(true)
   }
 
+  
 
-  const handlePay = () => {
+  const getHasSkinList = async() =>{
+    const { data } = await cloudRequest({
+      path: '/skin/list', // 业务自定义路径和参数
+      method: 'GET', // 根据业务选择对应方法
+      data: {
+        userId: userInfo.userid,
+      }
+    })
+    setSkinList(data.data)
+  }
+
+  useEffect(() => {
+    getHasSkinList();
+  }, [userInfo.userid])
+
+
+  const handlePay = async () => {
+    const result = await cloudRequest({
+      path: '/skin/buy', // 业务自定义路径和参数
+      method: 'POST', // 根据业务选择对应方法
+      data: {
+        skin: modalItem,
+        userId: userInfo.userid,
+      }
+    })
     Taro.showToast({
       title: '正在施工中，需要添加客服：🌏danarrr',
       icon: 'none', // 不显示图标
@@ -82,7 +114,11 @@ export default function EmojiList () {
                 <Image className='emoji-list__modal-emoji' src={item.img} key={item.key} />
               ))}
             </View>
-            <View className='emoji-list__modal-btn' onClick={handlePay}>￥9.9 立即购买</View>
+            {
+              (hasSkinList?.includes(modalItem) || hasSkinList?.includes('all')) ? <View className='emoji-list__modal-btn'>您已拥有</View> : 
+              <View className='emoji-list__modal-btn' onClick={handlePay}>￥9.9 立即购买</View>
+            }
+            
           </View>
         </View>
       )}

@@ -1,5 +1,6 @@
-import { useRef, useState, useImperativeHandle, forwardRef } from 'react';
+import { useRef, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { View, Image } from '@tarojs/components';
+import { useAppSelector } from '@/store';
 import { getEmojiMap } from '@/utils/constants';
 
 
@@ -10,11 +11,16 @@ interface TurntableProps {
 }
 
  function Turntable({ onSelect }: TurntableProps, ref) {
+  const userInfo = useAppSelector((state) => state.user.userInfo?.data);
   const [currentIndex, setCurrentIndex] = useState(0);
   const touchStartX = useRef(0);
   const [offset, setOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const emojiConfig = Object.values(getEmojiMap('emoji1') || {})
+  const [emojiConfig, setEmojiConfig] = useState(Object.values(getEmojiMap('emoji1')))
+
+  useEffect(() => {
+    setEmojiConfig(Object.values(getEmojiMap(userInfo.currentSkin)))
+  }, [userInfo.currentSkin])
 
   useImperativeHandle(ref, () => ({
     handleTouchStart: (e: any) => {

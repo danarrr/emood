@@ -1,12 +1,14 @@
 import { Action, configureStore, ThunkAction } from "@reduxjs/toolkit";
 import { moodSlice } from "./moods";
+import { userSlice } from "./user";
 import { TypedUseSelectorHook, useDispatch, useSelector, useStore } from "react-redux";
 
 
 export function makeStore() {
   return configureStore({
     reducer: {
-      mood: moodSlice.reducer
+      mood: moodSlice.reducer,
+      user: userSlice.reducer
     },
     devTools: false,
   });

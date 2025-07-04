@@ -32,9 +32,12 @@ type MoodState = {
 }
 
 export default function MoodDetail () {
-  const emojiConfigMap = getEmojiMap('emoji1') || {};
+
   const dispatch = useAppDispatch();
   const moodlist = useAppSelector((state) => state.mood.moodList);
+  const userInfo = useAppSelector((state) => state.user.userInfo.data);
+  const [emojiConfigMap, setEmojiConfig] = useState('');
+
   const router = useRouter();
   const { mood, date } = router.params as {
     mood: keyof typeof emojiConfigMap;
@@ -51,6 +54,11 @@ export default function MoodDetail () {
   const [images, setImages] = useState<string[]>([]);
   const [uploading, setUploading] = useState(false);
   const [content, setContent] = useState(''); // 添加内容状态
+
+  useEffect(() => {
+    console.log('????getEmojiMap', getEmojiMap(userInfo.currentSkin))
+    setEmojiConfig(getEmojiMap(userInfo.currentSkin))
+  }, [userInfo.currentSkin])
 
   // 初始化数据
   useEffect(() => {
@@ -215,7 +223,7 @@ export default function MoodDetail () {
           title: '保存成功',
         });
 
-        dispatch(getMoodListAction({data: {year: Number(moodState.dateInfo?.year)}, token}));
+        dispatch(getMoodListAction({data: {year: Number(moodState.dateInfo?.year)}}));
         setTimeout(() => {
           Taro.navigateBack();
         }, 1500);

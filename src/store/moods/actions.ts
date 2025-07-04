@@ -15,9 +15,6 @@ export const getMoodListAction = createAsyncThunk('moodSlice/getMoodListAction',
     data,
     path: '/mood/list',
     method: 'GET',
-    // header: {
-    //   'X-WX-SERVICE': 'emh-platform-server',
-    //   'authorization': token
-    // }
   });
 });
+

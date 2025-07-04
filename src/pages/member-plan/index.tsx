@@ -5,8 +5,6 @@ import { useState, useEffect } from 'react'
 import PageHeader from '@components/PageHeader';
 import UserProfile from '@components/UserProfile';
 
-import { cloudRequest } from '@/utils/request';
-
 import IconSkin from '@imgs/icon-cloth@2x.png'
 import IconAi from '@imgs/icon-ai@2x.png'
 import IconImage from '@imgs/icon-pic@2x.png'
@@ -34,15 +32,15 @@ export default function MemberPlan () {
     //   data: {
     //   }
     // })
-    const result = await cloudRequest({
-      path: '/member/save', // 业务自定义路径和参数
-      method: 'POST', // 根据业务选择对应方法
-      data: {
-        duration: 'half_year',
-        userId: '10001'
-      }
-    })
-    console.log('?????ressult', result)
+    // const result = await cloudRequest({
+    //   path: '/member/save', // 业务自定义路径和参数
+    //   method: 'POST', // 根据业务选择对应方法
+    //   data: {
+    //     duration: 'half_year',
+    //     userId: '10001'
+    //   }
+    // })
+   
     Taro.showToast({
       title: '正在施工中，需要添加客服：🌏danarrr',
       icon: 'none', // 不显示图标
