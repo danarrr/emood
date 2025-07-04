@@ -1,6 +1,7 @@
 import { View, Button, Image, Input } from '@tarojs/components'
 import Taro, { getStorageSync } from '@tarojs/taro'
 import { useState } from 'react'
+import { useAppSelector } from '@/store'
 import './index.less'
 
 interface UserProfileProps {
@@ -14,13 +15,15 @@ interface UserProfileProps {
 const UserProfile: React.FC<UserProfileProps> = ({
   defaultAvatar = 'https://mmbiz.qpic.cn/mmbiz/icTdbqWNOwNRna42FI242Lcia07jQodd2FJGIYQfG0LAJGFxM4FbnQP6yfMxBgJ0F3YRqJCJ1aPAK2dQagdusBZg/0',
   defaultNickname = '用户昵称',
-  vipStatus = '还未加入会员',
+  // vipStatus = '还未加入会员',
   onProfileChange,
   onEditClick
 }) => {
   const avatarFromStorage = getStorageSync('avatarUrl');
   const nameFromStorage = getStorageSync('nickName');
 
+  const userInfo = useAppSelector(state => state.user.userInfo.data);
+  const vipStatus = userInfo?.isMember ? '尊贵会员' : '还未加入会员';
   const [avatarUrl, setAvatarUrl] = useState(avatarFromStorage || defaultAvatar);
   const [nickName, setNickName] = useState(nameFromStorage || defaultNickname);
 

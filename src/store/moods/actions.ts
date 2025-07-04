@@ -6,11 +6,10 @@ interface getMoodListPayload {
     year: number;
     month?: number;
     day?: number;
-  };
-  token: string;
+  }
 }
 
-export const getMoodListAction = createAsyncThunk('moodSlice/getMoodListAction', async ({data, token}: getMoodListPayload) => {
+export const getMoodListAction = createAsyncThunk('moodSlice/getMoodListAction', async ({data}: getMoodListPayload) => {
   return await cloudRequest({
     data,
     path: '/mood/list',

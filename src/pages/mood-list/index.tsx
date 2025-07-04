@@ -1,14 +1,18 @@
 import { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
-import Taro, { useLoad, useRouter } from '@tarojs/taro';
+import Taro, { useRouter } from '@tarojs/taro';
+import { useAppDispatch, useAppSelector } from '@/store';
+import { getMoodListAction } from '@/store/moods/actions'
 
-import { useAppSelector } from '@/store';
+import { getEmojiMap, getSkinType } from '@/utils/emojiMaps';
 
 import PageHeader from '@components/PageHeader';
-import { getEmojiMap } from '@utils/constants';
+
 import IconMore from '@imgs/icon-more.png';
 
 import './index.less';
+import { cloudRequest } from '@/utils/request';
+import { getNowDateInfo } from '@/utils/date';
 
 
 interface MoodRecordItem {
@@ -23,6 +27,7 @@ interface MoodRecordItem {
 }
 
 export default function MoodList() {
+  const dispatch = useAppDispatch()
   const moodlist = useAppSelector((state) => state.mood.moodList);
   const router = useRouter();
   const { year, month } = router.params;
@@ -30,8 +35,14 @@ export default function MoodList() {
   const [moodRecords, setMoodRecords] = useState<MoodRecordItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const emojiConfigMap = getEmojiMap('emoji1')
 
+  
+
+  const getEmojiConfigMap = (emojiName: string = '') => {
+    const skinType = getSkinType(emojiName);
+    const emojiMapBySkin = getEmojiMap(skinType) || {};
+    return emojiMapBySkin;
+  }
 
   useEffect(() => {
     getMoodList(Number(year), Number(month));
@@ -42,6 +53,7 @@ export default function MoodList() {
     setError(null);
     try {
       const allRecords = Object.values(moodlist.data?.[month] ?? {}) as MoodRecordItem[];
+      console.log('111allRecords', allRecords)
       setMoodRecords(allRecords);
     } catch (err) {
       setError((err as Error).message);
@@ -64,8 +76,24 @@ export default function MoodList() {
     return `周${weekdays[date.getDay()]} ${day}日`;
   };
 
-  const handleDelete = () => {
+  const reLoadMoodList = async(year, month) => {
+    await dispatch(getMoodListAction({ data: { year }}));
+    await getMoodList(Number(year), Number(month));
+  }
 
+  const handleDelete = async (year: number, month: number, day: number) => {
+    try {
+      const res = await cloudRequest({
+        path: 'mood/delete',
+        method: 'POST',
+        data: { year, month, day }
+      });
+      if (res) { Taro.showToast({ title: '删除成功', icon: 'none'});
+        reLoadMoodList(year, month) // 刷新列表
+      }
+    } catch (err) {
+      Taro.showToast({ title: '删除失败' });
+    }
   }
 
   const goTo = (route: string, data?: any) => {
@@ -85,12 +113,14 @@ export default function MoodList() {
   }
 
   const handleEdit = (record) => {
+    const dateArr = record.dateStr.split('-');
+
     Taro.showActionSheet({
       itemColor: '#383838',
       itemList: ['编辑', '删除'],
       success: function (res) {
         if (res.tapIndex === 0) {
-          const dateArr = record.dateStr.split('-')
+          
           goTo('mood-detail', {
             mood: record.mood,
             date: JSON.stringify({
@@ -100,7 +130,11 @@ export default function MoodList() {
             }) // 先序列化对象
           })
         } else if (res.tapIndex === 1) {
-        
+          handleDelete(
+            dateArr[0],
+            dateArr[1],
+            dateArr[2]
+          )
         } 
       }
     })
@@ -120,29 +154,32 @@ export default function MoodList() {
         scrollY
         className='mood-list-scroll'
       >
-        {!loading && moodRecords.map((record) => (
-          <View className='mood-list-item' key={record._id}>
-            <View className='mood-list-item__header'>
-              <Text className='mood-list-item__date'>
-                {formatDay(record.dateStr)}
-              </Text>
-              <Image className='mood-list-item__more' src={IconMore} onClick={() => handleEdit(record)} />
+        {!loading && moodRecords.map((record) => {
+          const { dateStr, mood, content, images } = record
+          return (
+            <View className='mood-list-item' key={record._id}>
+              <View className='mood-list-item__header'>
+                <Text className='mood-list-item__date'>
+                  {formatDay(dateStr)}
+                </Text>
+                <Image className='mood-list-item__more' src={IconMore} onClick={() => handleEdit(record)} />
+              </View>
+              <View className='mood-list-item__card'>
+                <Image src={getEmojiConfigMap(mood)?.[mood]?.src} className='mood-list-item__emoji' />
+                <Text className='mood-list-item__content'>
+                  {content}
+                </Text>
+                {images && images.length > 0 && (
+                  <Image 
+                    src={images[0]} 
+                    className='mood-list-item__image' 
+                    mode='aspectFill' 
+                  />
+                )}
+              </View>
             </View>
-            <View className='mood-list-item__card'>
-              <Image src={emojiConfigMap[record.mood]?.src} className='mood-list-item__emoji' />
-              <Text className='mood-list-item__content'>
-                {record.content}
-              </Text>
-              {record.images && record.images.length > 0 && (
-                <Image 
-                  src={record.images[0]} 
-                  className='mood-list-item__image' 
-                  mode='aspectFill' 
-                />
-              )}
-            </View>
-          </View>
-        ))}
+          )
+        })}
       </ScrollView>
     </View>
   );

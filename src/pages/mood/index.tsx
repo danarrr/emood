@@ -1,6 +1,6 @@
-import { View, Image, Swiper, SwiperItem } from '@tarojs/components'
-import Taro, { useLoad } from '@tarojs/taro'
 import { useState, useEffect, useRef } from 'react'
+import { View, Image, Swiper, SwiperItem } from '@tarojs/components'
+import Taro from '@tarojs/taro'
 import { useAppDispatch, useAppSelector } from '@/store'
 
 import { DataStatus } from '@/store/interface'
@@ -12,61 +12,56 @@ import Calendar from '@components/Calendar'
 import Greeting from '@/components/Greeting'
 
 import { getFestivalBgImage, getGreetingTxt } from '@/utils/festivalSetting'
+import { getNowDateInfo } from '@utils/date'
 
-import avater from '@imgs/face@2x-3.png'
-import usercenter from '@imgs/icon-mine@2x.png'
+import avatar from '@imgs/face@2x-3.png'
+import userCenter from '@imgs/icon-mine@2x.png'
 import book from '@imgs/icon-god@2x.png'
-import masktitle from '@imgs/pic-txt@2x.png';
+import maskTitle from '@imgs/pic-txt@2x.png'
 
 import './index.less'
 
-// 定义情绪类型
-interface MoodEmoji {
-  id: number;
-  emoji: string;
-  name: string;
+interface MonthInfo {
+  month: string;
+  year: string;
+  date: string;
 }
-
 
 export default function MoodRecord () {
   const dispatch = useAppDispatch();
-  const moodlist = useAppSelector((state) => state.mood.moodList);
-  useLoad(() => {
-    console.log('Page loaded.')
-  })
+  const moodList = useAppSelector((state) => state.mood.moodList);
+  const turntableRef = useRef<any>();
 
-  const turntableRef = useRef();
-  const [showMask, setShowMask] = useState(false)
-  const [currentMonthInfo, setCurrentMonthInfo] = useState({ 
-    month: new Date().getMonth() + 1 + '', // 当前月份（0-11，需要+1）
-    year: new Date().getFullYear() + '', // 当前年份
-    date: new Date().getDate() + '' // 当前日期
+  const [showMask, setShowMask] = useState<boolean>(false)
+  const [currentMonthInfo, setCurrentMonthInfo] = useState<MonthInfo>({ 
+    month: getNowDateInfo().month,
+    year: getNowDateInfo().year, 
+    date: getNowDateInfo().date
   });
-  const [showMaskDate, setShowMaskDate] = useState(currentMonthInfo)
+  const [showMaskDate, setShowMaskDate] = useState<MonthInfo>(currentMonthInfo)
   const [currentDialogue, setCurrentDialogue] = useState(getGreetingTxt());
 
-  const getUserInfo = async() => {
+  // 获取用户信息
+  const getUserInfo = async () => {
     dispatch(getUserInfoAction())
   }
-  const getMoodList = async(data) => {
-    const token = Taro.getStorageSync('authorization')?.token
-    if (!token) {return};
-    dispatch(getMoodListAction({data, token}))
+
+  // 获取情绪列表
+  const getMoodList = async (data: { year: number }) => {
+    dispatch(getMoodListAction({ data }))
   }
   
-
   // 组件加载时获取情绪数据
   useEffect(() => {
-    getUserInfo();
-    if (moodlist.status === DataStatus.INITIAL) {
-      getMoodList({year: currentMonthInfo.year});
+    if (moodList.status === DataStatus.INITIAL) {
+      getUserInfo();
+      getMoodList({ year: +currentMonthInfo.year }); // 不用传userID, jwt直接验签？ @bapeLin
     }
   }, []);
 
+  // 路由跳转
   const goTo = (route: string, data?: any) => {
-    Taro.vibrateShort({
-      type: 'light'
-    });
+    Taro.vibrateShort({ type: 'light' });
     const url = data 
       ? `${route}?${Object.entries(data)
           .map(([key, value]) => {
@@ -78,37 +73,33 @@ export default function MoodRecord () {
           })
           .join('&')}`
       : route;
-      
     Taro.navigateTo({ url });
   }
 
-  const handleMaskTouchMove = (e) => {
-    // 调用子组件方法
-    turntableRef.current?.handleTouchMove(e);
+  // 调用 Turntable 子组件方法
+  const handleMaskTouchMove = (e: any) => {
+    turntableRef.current?.handleTouchMove?.(e);
   };
-
-  const handleMaskTouchStart = (e) => {
-    turntableRef.current?.handleTouchStart(e);
+  const handleMaskTouchStart = (e: any) => {
+    turntableRef.current?.handleTouchStart?.(e);
   }
 
   // 处理月份切换
-  const handleMonthChange = (e) => {
+  const handleMonthChange = (e: { detail: { current: number } }) => {
     const { current } = e.detail;
     const monthNumber = current + 1; // current 从 0 开始，所以加 1
     const yearNumber = parseInt(currentMonthInfo.year, 10);
-    
     setCurrentMonthInfo({
       month: monthNumber.toString(),
       year: yearNumber.toString(),
-      date: currentMonthInfo.date // 保持当前日期不变
+      date: currentMonthInfo.date
     });
   }
 
-  // 生成12个月的日历组件
+  // 生成 12 个月的日历组件
   const renderCalendarItems = () => {
     const items: JSX.Element[] = [];
     const year = parseInt(currentMonthInfo.year, 10);
-    
     for (let month = 1; month <= 12; month++) {
       items.push(
         <SwiperItem key={month}>
@@ -116,33 +107,32 @@ export default function MoodRecord () {
             year={year} 
             month={month} 
             handleSltMood={handleSetShowMaskDate}
-            emojiData={moodlist?.data? moodlist?.data[month] : {}}
+            emojiData={moodList?.data?.[month] || {}}
           />
         </SwiperItem>
       );
     }
-    
     return items;
   }
 
-  const handleSetShowMaskDate = (date) => {
+  // 选择日期后显示蒙层
+  const handleSetShowMaskDate = (date: MonthInfo) => {
     setShowMaskDate(date)
     handleOpenSltMoodMask()
   }
 
+  // 打开蒙层
   const handleOpenSltMoodMask = () => {
     Taro.vibrateShort()
     setShowMask(true)
   }
 
   return (
-    <View className='mood' style={{background: `url(${getFestivalBgImage()}) no-repeat center top / cover`}}>  
-    {/* 顶部栏 */}
+    <View className='mood' style={{ background: `url(${getFestivalBgImage()}) no-repeat center top / cover` }}>
+      {/* 顶部栏 */}
       <View className='mood-header'>
         <View className='mood-header__date'>
-          <View className='mood-header__month'>
-            {currentMonthInfo.month}月
-          </View>
+          <View className='mood-header__month'>{currentMonthInfo.month}月</View>
           <View className='mood-header__year'>{currentMonthInfo.year}年</View>
         </View>
       </View>
@@ -150,56 +140,42 @@ export default function MoodRecord () {
       <Greeting
         firstLine={currentDialogue.hello}
         secondLine={currentDialogue.question}
-        avatar={avater}
+        avatar={avatar}
       />
-      {/* <View className='mood-divider'></View> */}
-      {/* emoji 选择 */}
-      {/* <View className='mood-emojis'>
-        {Object.values(moodlist).map((emojiName) => (
-          <View  className='mood-emojis__item'>
-            <Image 
-              className='mood-emojis__img'
-              src={emojiMap[emojiName]}
-              mode='aspectFit'
-            />
-          </View>
-        ))}
-      </View> */}
-      
       {/* Calendar with Swiper */}
       <Swiper
         className='mood-swiper'
-        current={parseInt(currentMonthInfo.month, 10) - 1}
+        current={Math.max(0, parseInt(currentMonthInfo.month, 10) - 1)}
         onChange={handleMonthChange}
       >
         {renderCalendarItems()}
       </Swiper>
-      
       {/* 蒙层弹窗 */}
       {showMask && (
-        <View className='mood-mask'
-          // catchTouchMove
-          onClick={() => setShowMask(false)} 
+        <View
+          className='mood-mask'
+          onClick={() => setShowMask(false)}
           onTouchMove={handleMaskTouchMove}
           onTouchStart={handleMaskTouchStart}
         >
-          <View><Image className='mood-mask__title' src={masktitle}/></View>
+          <View><Image className='mood-mask__title' src={maskTitle} /></View>
           <View className='mood-mask__content'>
-            <Turntable 
+            <Turntable
               ref={turntableRef}
-              onSelect={sltMood =>{
+              onSelect={sltMood => {
                 goTo('/pages/mood-detail/index', {
-                mood: sltMood,
-                date: JSON.stringify(showMaskDate) // 先序列化对象
-              })}}
-            ></Turntable>
+                  mood: sltMood,
+                  date: JSON.stringify(showMaskDate)
+                })
+              }}
+            />
           </View>
         </View>
       )}
       {/* 底部导航 */}
       <View className='mood-tabbar'>
         <View className='mood-tabbar__item' onClick={() => goTo('/pages/user-center/index')}>
-          <Image className='mood-tabbar__icon' src={usercenter} />
+          <Image className='mood-tabbar__icon' src={userCenter} />
         </View>
         <View className='mood-tabbar__item mood-tabbar__item--center' onClick={handleOpenSltMoodMask}>
           <View className='mood-tabbar__plus'>＋</View>

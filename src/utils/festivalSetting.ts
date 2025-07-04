@@ -41,7 +41,7 @@ export function getGreetingTxt() {
     return { hello: '夜深了~', question: '想和我说点啥？' };
   }
   if (day === 5) {
-    return { hello: 'Happy Friday!', question: '今晚过的开心吗' };
+    return { hello: 'Happy Friday!', question: '放假噜~' };
   }
   return { hello: 'Hello~', question: '今天过得怎样？' };
 }

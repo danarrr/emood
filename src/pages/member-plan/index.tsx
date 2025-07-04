@@ -1,6 +1,7 @@
 import { View, Button, Image, Swiper, SwiperItem  } from '@tarojs/components'
 import Taro, { useLoad } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
+import { useAppSelector } from '@/store'
 
 import PageHeader from '@components/PageHeader';
 import UserProfile from '@components/UserProfile';
@@ -13,6 +14,9 @@ import './index.less'
 
 export default function MemberPlan () {
   const [activeIndex, setActiveIndex] = useState(0);
+  const userInfo = useAppSelector(state => state.user.userInfo.data);
+
+  const vipStatus = userInfo?.isMember ? '已是会员' : '还未加入会员';
 
   useEffect(() => {
   }, [activeIndex.toString()]);
@@ -26,18 +30,12 @@ export default function MemberPlan () {
   };
 
   const handlePayClick = async() => {
-    // const result1 = await cloudRequest({ // @anitatodo 为什么没有拿到用户id
-    //   path: '/account/user-info', // 业务自定义路径和参数
-    //   method: 'GET', // 根据业务选择对应方法
-    //   data: {
-    //   }
-    // })
     // const result = await cloudRequest({
     //   path: '/member/save', // 业务自定义路径和参数
     //   method: 'POST', // 根据业务选择对应方法
     //   data: {
     //     duration: 'half_year',
-    //     userId: '10001'
+    //     userId: userinfo.userid
     //   }
     // })
    
@@ -56,6 +54,7 @@ export default function MemberPlan () {
       <UserProfile 
         onProfileChange={handleProfileChange}
         onEditClick={handleEditClick}
+        vipStatus={vipStatus}
       />
       <Swiper
         className='member-plan__cards'

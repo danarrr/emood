@@ -8,6 +8,8 @@ export interface UserInfo {
   avatar: string;
   gender?: string;
   email?: string;
+  currentSkin: string
+  birthdayMoonth?: string
   [key: string]: any;
 }
 
@@ -44,6 +46,7 @@ export const userSlice = createSlice({
         state.userInfo.status = DataStatus.FAILED;
       })
       .addCase(getUserInfoAction.fulfilled, (state, { payload }) => {
+        console.log('payload', payload)
         if (!payload.data) {
           state.userInfo.status = DataStatus.FAILED;
           return state;

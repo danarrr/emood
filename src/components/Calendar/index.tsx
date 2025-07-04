@@ -3,40 +3,38 @@ import { View, Image } from '@tarojs/components';
 import React from 'react';
 import { MoodListData } from '@/store/moods';
 
-import { getEmojiMap } from '@/utils/constants';
+import { getEmojiMap, getSkinType } from '@/utils/emojiMaps';
+import { isFuture } from '@/utils/date';
 
-import './index.less'; // Assuming a corresponding less file
+import './index.less'; 
 
 
-// Define weekdays for the calendar header
+// 日历头部星期
 const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
 
 
 interface CalendarProps {
   year: number;
-  month: number; // Month number (1-12)
-  emojiData: MoodListData; // 修改类型定义，value 为表情图片名称
-  handleSltMood?: void
+  month: number; // 月份（1-12）
+  emojiData: MoodListData; // 传入的表情数据，key 为日期
+  handleSltMood: (date: { year: number; month: number; date: number }) => void; // 选择日期的回调
 }
 
 const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handleSltMood }) => {
-  const emojiMap = getEmojiMap('emoji1')
-  // Helper to get number of days in a month
+  // 获取当月天数
   const getDaysInMonth = (year: number, month: number): number => {
-    // Month is 1-based for Date constructor when getting last day
     return new Date(year, month, 0).getDate();
   };
 
-  // Helper to get the weekday of the first day of the month (0 for Sunday)
+  // 获取当月第一天是周几
   const getFirstDayOfWeek = (year: number, month: number): number => {
-    // Month is 0-based for Date constructor
     return new Date(year, month - 1, 1).getDay();
   };
 
-  // Calculate number of days and first day of week for the given month and year
   const numberOfDays = getDaysInMonth(year, month);
   const firstDayOfWeek = getFirstDayOfWeek(year, month);
 
+  // 跳转到日记列表页
   const goToMoodList = (hasRecord, dayNumber) => {
     if (hasRecord) {
       Taro.navigateTo({ url: `/pages/mood-list/index?day=${dayNumber}&month=${month}&year=${year}` });
@@ -51,20 +49,30 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handle
           </View>
         ))}
 
-        {[...Array(firstDayOfWeek)].map((_, i) => <View key={`empty-${i}`} className='mood-calendar__day'></View>)} {/* Empty cells before the 1st */}
+        {/* 补齐月初空白 */}
+        {[...Array(firstDayOfWeek)].map((_, i) => <View key={`empty-${i}`} className='mood-calendar__day'></View>)}
+        {/* 渲染每一天 */}
         {[...Array(numberOfDays)].map((_, index) => {
           const dayNumber = index + 1;
           let emojiSrc: string | null = null;
           
           if (emojiData[dayNumber.toString()]) {
             const emojiName = emojiData[dayNumber.toString()]?.mood
-            emojiSrc = emojiMap[emojiName]?.src
+           
+            // 动态获取皮肤类型
+            const skinType = getSkinType(emojiName);
+            const emojiMapBySkin = getEmojiMap(skinType) || {};
+
+            emojiSrc = emojiMapBySkin[emojiName]?.src;
+           
           }
-          
+          // 超过今天的日期不可点击
           return (
-            <View key={dayNumber} className='mood-calendar__day' onClick={emojiSrc ? () => goToMoodList(emojiSrc, dayNumber) : () => {handleSltMood({
-              year, month, date:dayNumber
-            })}}>
+            <View key={dayNumber} className='mood-calendar__day' onClick={
+              isFuture(year, month, dayNumber) ? undefined : (
+                () => emojiSrc ? goToMoodList(emojiSrc, dayNumber) 
+                 : handleSltMood({ year, month, date:dayNumber})
+              )}>
               {dayNumber}
               {emojiSrc && (
                 <Image 

@@ -58,7 +58,7 @@ export const moodSlice = createSlice({
           return state;
         }
         state.moodList.status = DataStatus.SUCCESS;
-        state.moodList.data = {...state.moodList.data, ...payload.data.data};
+        state.moodList.data = {...state.moodList.data, ...payload.data};
         return state;
       });
   },

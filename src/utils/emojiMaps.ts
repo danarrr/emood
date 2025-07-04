@@ -2,7 +2,12 @@
 export const domin = 'https://prod-6glre6n1cad02d9f-1363336642.tcloudbaseapp.com';
 export const sign = 'sign=9cc7b625eb436649b8a821c039d404a9&t=1750909934'; 
 
-const emoji1Config = {
+
+const skinOptions = {
+  
+}
+
+export const emoji1Config = {
   'emoji1a': { key: 'emoji1a', src: domin + '/emoji3/a.png?' + sign, text: '好' },
   'emoji1b': { key: 'emoji1b', src: domin + '/emoji3/b.png?' + sign, text: '很棒' },
   'emoji1c': { key: 'emoji1c', src: domin + '/emoji3/c.png?' + sign, text: '一般' },
@@ -14,7 +19,7 @@ const emoji1Config = {
   'emoji1i': { key: 'emoji1i', src: domin + '/emoji3/i.png?' + sign, text: '焦虑' },
 };
 
-const emoji5Config = {
+export const emoji5Config = {
   'emoji5a': { key: 'emoji5a', src: domin + '/emoji5/a.png?' + sign, text: '好' },
   'emoji5b': { key: 'emoji5b', src: domin + '/emoji5/b.png?' + sign, text: '很棒' },
   'emoji5c': { key: 'emoji5c', src: domin + '/emoji5/c.png?' + sign, text: '一般' },
@@ -26,41 +31,32 @@ const emoji5Config = {
   'emoji5i': { key: 'emoji5i', src: domin + '/emoji5/i.png?' + sign, text: '焦虑' },
 };
 
-// // 创建从 MOOD_TYPE 到表情配置的映射
-// export const emojiConfigMap = {
-//   hao: { src: domin + '/emoji2/a.png?' + sign, text: '好' },
-//   henbang: { src: domin + '/emoji2/b.png?' + sign, text: '很棒' },
-//   yiban: { src: domin + '/emoji2/c.png?' + sign, text: '一般' },
-//   lei: { src: domin + '/emoji2/d.png?' + sign, text: '累' },
-//   xindong: { src: domin + '/emoji2/e.png?' + sign, text: '心动' },
-//   youyu: { src: domin + '/emoji2/f.png?' + sign, text: '忧郁' },
-//   shengqi: { src: domin + '/emoji2/g.png?' + sign, text: '生气' },
-//   pingjing: { src: domin + '/emoji2/h.png?' + sign, text: '平静' },
-//   jiaolv: { src: domin + '/emoji2/i.png?' + sign, text: '焦虑' },
-// };
-
-export const getEmojiMap = (emojiIdx) => {
+export const getEmojiMap = (emojiIdx, type = 'obj' as 'obj' | 'arr') => {
   if(emojiIdx === 'emoji1') {
-    return emoji1Config
+    return type === 'arr' ? Object.values(emoji1Config) : emoji1Config
   }
 
   if(emojiIdx === 'emoji2') {
-    return emoji1Config
+    return type === 'arr' ? Object.values(emoji1Config) : emoji1Config
   }
 
   if(emojiIdx === 'emoji3') {
-    return emoji1Config
+    return type === 'arr' ? Object.values(emoji1Config) : emoji1Config
   }
 
   if(emojiIdx === 'emoji4') {
-    return emoji1Config
+    return type === 'arr' ? Object.values(emoji1Config) : emoji1Config
   }
 
   if(emojiIdx === 'emoji5'){
-    return emoji5Config
+    return type === 'arr' ? Object.values(emoji5Config) : emoji5Config
   }
 
   if(emojiIdx === 'emoji6'){
-    return emoji5Config
+    return type === 'arr' ? Object.values(emoji1Config) : emoji1Config
   }
+}
+
+export const getSkinType = (emojiName) => {
+  return emojiName ? emojiName.replace(/([a-zA-Z0-9]+)[a-z]$/, '$1') : ''
 }

@@ -1,5 +1,5 @@
 import { View, Text, Image } from '@tarojs/components';
-import { getEmojiMap } from '@utils/constants'
+import { getEmojiMap } from '@/utils/emojiMaps'
 
 import './index.less';
 

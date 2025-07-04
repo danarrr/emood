@@ -1,7 +1,8 @@
 import { useRef, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { View, Image } from '@tarojs/components';
 import { useAppSelector } from '@/store';
-import { getEmojiMap } from '@/utils/constants';
+
+import { getEmojiMap } from '@/utils/emojiMaps';
 
 
 import './index.less';
@@ -10,17 +11,30 @@ interface TurntableProps {
   onSelect?: (moodType: string) => void;
 }
 
+// 定义 EmojiItem 类型
+interface EmojiItem {
+  key: string;
+  src: string;
+  text: string;
+}
+
  function Turntable({ onSelect }: TurntableProps, ref) {
-  const userInfo = useAppSelector((state) => state.user.userInfo?.data);
-  const [currentIndex, setCurrentIndex] = useState(0);
+  const userInfo = useAppSelector((state) => state.user.userInfo);
   const touchStartX = useRef(0);
+
+  const [currentIndex, setCurrentIndex] = useState(0);
   const [offset, setOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
-  const [emojiConfig, setEmojiConfig] = useState(Object.values(getEmojiMap('emoji1')))
+
+  const [currentEmojiMap, setCurrentEmojiMap] = useState<EmojiItem[]>([])
+
 
   useEffect(() => {
-    setEmojiConfig(Object.values(getEmojiMap(userInfo.currentSkin)))
-  }, [userInfo.currentSkin])
+    const currentSkin = userInfo.data?.currentSkin
+    const emojiMap = getEmojiMap(currentSkin, 'arr')
+    setCurrentEmojiMap(emojiMap);
+
+  }, [userInfo.status === 'success'])
 
   useImperativeHandle(ref, () => ({
     handleTouchStart: (e: any) => {
@@ -37,15 +51,15 @@ interface TurntableProps {
         if (currentIndex > 0) {
           setIsAnimating(true);
           setCurrentIndex((prevIndex) => prevIndex - 1);
-          setOffset(prev => prev + (360 / emojiConfig.length));
+          setOffset(prev => prev + (360 / currentEmojiMap.length));
           touchStartX.current = e.touches[0].clientX;
           setTimeout(() => setIsAnimating(false), 300); // 动画结束后重置状态
         }
       } else if (moveX < -30) { // 降低触发阈值
-        if (currentIndex < emojiConfig.length - 1) {
+        if (currentIndex < currentEmojiMap.length - 1) {
           setIsAnimating(true);
           setCurrentIndex((prevIndex) => prevIndex + 1);
-          setOffset(prev => prev - (360 / emojiConfig.length));
+          setOffset(prev => prev - (360 / currentEmojiMap.length));
           touchStartX.current = e.touches[0].clientX;
           setTimeout(() => setIsAnimating(false), 300); // 动画结束后重置状态
         }
@@ -53,46 +67,9 @@ interface TurntableProps {
     }
   }))
 
-
-  // const handleTouchStart = (e: any) => {
-  //   touchStartX.current = e.touches[0].clientX;
-  //   setIsAnimating(false);
-  // };
-
-
-
-  // const handleTouchMove = (e: any) => {
- 
-  //   if (isAnimating) return;
-    
-  //   const moveX = e.touches[0].clientX - touchStartX.current;
-    
-  //   if (moveX > 30) { // 降低触发阈值
-  //     if (currentIndex > 0) {
-  //       setIsAnimating(true);
-  //       setCurrentIndex((prevIndex) => prevIndex - 1);
-  //       setOffset(prev => prev + (360 / emojiConfig.length));
-  //       touchStartX.current = e.touches[0].clientX;
-  //       setTimeout(() => setIsAnimating(false), 300); // 动画结束后重置状态
-  //     }
-  //   } else if (moveX < -30) { // 降低触发阈值
-  //     if (currentIndex < emojiConfig.length - 1) {
-  //       setIsAnimating(true);
-  //       setCurrentIndex((prevIndex) => prevIndex + 1);
-  //       setOffset(prev => prev - (360 / emojiConfig.length));
-  //       touchStartX.current = e.touches[0].clientX;
-  //       setTimeout(() => setIsAnimating(false), 300); // 动画结束后重置状态
-  //     }
-  //   }
-  // };
-
-  const handleSelect = (emojiName) => {
-    onSelect?.(emojiName);
-  };
-
   // 计算表情位置
   const getEmojiPosition = (index: number) => {
-    const baseAngle = (index * 360) / emojiConfig.length;
+    const baseAngle = (index * 360) / currentEmojiMap.length;
     const currentAngle = baseAngle + offset;
     const radius = 100;
     const x = Math.cos((currentAngle * Math.PI) / 180) * radius;
@@ -100,14 +77,16 @@ interface TurntableProps {
     return { x, y };
   };
 
+  const handleSelect = (emojiName) => {
+    onSelect?.(emojiName);
+  };
+
+ 
+
   return (
-    <View
-      className="circle-container"
-      // onTouchStart={handleTouchStart}
-      // onTouchMove={handleTouchMove}
-    >
+    <View className="circle-container" >
       <View className="circle" />
-      {emojiConfig.map((emoji, index) => {
+      {!!currentEmojiMap.length && currentEmojiMap.map((emoji, index) => {
         const { x, y } = getEmojiPosition(index);
         return (
           <View 
