@@ -38,7 +38,7 @@ export default function UserCenter () {
   return (
     <View className='user-center'>
       {/* 顶部导航 */}
-      <PageHeader goBack={goBack} title='我的' />
+      <PageHeader title='我的' />
       {/* 用户信息 */}
       <UserProfile 
         onProfileChange={handleProfileChange}
