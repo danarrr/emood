@@ -1,3 +1,3 @@
 export default definePageConfig({
-  navigationBarTitleText: '书本页'
+  navigationBarTitleText: '上帝之书'
 })

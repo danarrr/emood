@@ -53,7 +53,6 @@ export default function MoodList() {
     setError(null);
     try {
       const allRecords = Object.values(moodlist.data?.[month] ?? {}) as MoodRecordItem[];
-      console.log('111allRecords', allRecords)
       setMoodRecords(allRecords);
     } catch (err) {
       setError((err as Error).message);

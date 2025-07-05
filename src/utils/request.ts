@@ -1,8 +1,8 @@
 import Taro from '@tarojs/taro'
-import { refreshLogin } from '@utils/login'
+import { refreshLogin, loginAndStore } from '@utils/login'
 
 // 云开发请求封装
-export async function cloudRequest(options, retry = true) {
+export async function cloudRequest(options) {
   let token = Taro.getStorageSync('authorization')?.token;
   const callOptions = {
     ...options,
@@ -15,12 +15,21 @@ export async function cloudRequest(options, retry = true) {
 
   const res = await Taro.cloud.callContainer(callOptions);
 
+  // 判断JWT过期 (code: -1, message: "jwt expired")
+  if (res.data?.code === -1 && res.data?.message === "jwt expired") {
+    const success = await loginAndStore();
+    if (success) {
+      token = Taro.getStorageSync('authorization')?.token;
+      return cloudRequest({ ...options, header: { ...options.header, authorization: token } });
+    }
+  }
+
   // 判断鉴权过期（假设401或后端自定义code为40101）
-  if ((res.statusCode === 401 || res.data?.code === 40101) && retry) {
+  if ((res.statusCode === 401 || res.data?.code === 40101)) {
     const success = await refreshLogin();
     if (success) {
       token = Taro.getStorageSync('authorization')?.token;
-      return cloudRequest({ ...options, header: { ...options.header, authorization: token } }, false);
+      return cloudRequest({ ...options, header: { ...options.header, authorization: token } });
     }
   }
 

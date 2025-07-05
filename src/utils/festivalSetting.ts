@@ -4,13 +4,17 @@ import bgChristmas from '@/imgs/bg-chirsmax@2x.png';
 import bgDefault from '@/imgs/bg@2x.png';
 
 
-const BIRTHDAY_MONTH = 6; // 你的生日月
 
-export function getFestivalBgImage() {
+
+export function getFestivalBgImage(birthdayMonth?: string) {
   const now = new Date();
   const hour = now.getHours();
   const month = now.getMonth() + 1;
   const date = now.getDate();
+
+  if (birthdayMonth && month === +birthdayMonth) {
+    return bgBirthday;
+  }
 
   if (hour >= 20 || hour < 6) {
     return bgNight;
@@ -20,22 +24,20 @@ export function getFestivalBgImage() {
     return bgChristmas;
   }
   
-  if (month === BIRTHDAY_MONTH) {
-    return bgBirthday;
-  }
  
   return bgDefault;
 }
 
-export function getGreetingTxt() {
+export function getGreetingTxt(birthdayMonth?: string) {
   const now = new Date();
   const hour = now.getHours();
   const day = now.getDay(); // 0=周日, 5=周五
   const month = now.getMonth() + 1; // 1-12
 
   // BIRTHDAY_MONTH
-  if (month === 5) {
-    return { hello: '生日月快乐！', question: '祝你生日月开心每一天！' };
+
+  if (birthdayMonth && month === +birthdayMonth) {
+    return { hello: 'Birthday Month', question: '寿星公快乐~' };
   }
   if (hour >= 20) {
     return { hello: '夜深了~', question: '想和我说点啥？' };

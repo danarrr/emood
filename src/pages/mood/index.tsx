@@ -30,6 +30,7 @@ interface MonthInfo {
 export default function MoodRecord () {
   const dispatch = useAppDispatch();
   const moodList = useAppSelector((state) => state.mood.moodList);
+  const userInfo = useAppSelector(state => state.user.userInfo)
   const turntableRef = useRef<any>();
 
   const [showMask, setShowMask] = useState<boolean>(false)
@@ -58,6 +59,12 @@ export default function MoodRecord () {
       getMoodList({ year: +currentMonthInfo.year }); // 不用传userID, jwt直接验签？ @bapeLin
     }
   }, []);
+
+
+ 
+  useEffect(() => {
+    setCurrentDialogue(getGreetingTxt(userInfo?.data?.birthdayMonth))
+  }, [!!userInfo?.data?.birthdayMonth])
 
   // 路由跳转
   const goTo = (route: string, data?: any) => {
@@ -128,7 +135,7 @@ export default function MoodRecord () {
   }
 
   return (
-    <View className='mood' style={{ background: `url(${getFestivalBgImage()}) no-repeat center top / cover` }}>
+    <View className='mood' style={{ background: `url(${getFestivalBgImage(userInfo?.data?.birthdayMonth)}) no-repeat center top / cover` }}>
       {/* 顶部栏 */}
       <View className='mood-header'>
         <View className='mood-header__date'>

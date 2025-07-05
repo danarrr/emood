@@ -179,7 +179,7 @@ export default function MoodDetail () {
   };
 
   return (
-    <View className='mood-detail' style={{ background: `url(${getFestivalBgImage()}) no-repeat center top / cover` }}>
+    <View className='mood-detail' style={{ background: `url(${getFestivalBgImage(userInfo?.data?.birthdayMonth)}) no-repeat center top / cover` }}>
       <PageHeader title='记录' />
       <View className='mood-detail__emojibox'>
         <Image

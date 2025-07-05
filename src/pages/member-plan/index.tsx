@@ -25,9 +25,9 @@ export default function MemberPlan () {
     console.log('Profile updated:', profile);
   };
 
-  const handleEditClick = () => {
-    console.log('Edit clicked');
-  };
+  // const handleEditClick = () => {
+  //   console.log('Edit clicked');
+  // };
 
   const handlePayClick = async() => {
     // const result = await cloudRequest({

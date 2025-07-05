@@ -1,6 +1,5 @@
 import { View, Text, Image } from '@tarojs/components';
-import { getEmojiMap } from '@/utils/emojiMaps'
-
+import { getSkinType, getEmojiMap } from '@/utils/emojiMaps'
 import './index.less';
 
 function getDaysInMonth(year: number, month: number) {
@@ -9,7 +8,6 @@ function getDaysInMonth(year: number, month: number) {
 
 const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, month: number, bookData: any }) => {
   const daysInMonth = getDaysInMonth(year, month);
-  const emojiMap = getEmojiMap('emoji1')
 
   // 计算每周的天数
   const weeks: number[][] = [];
@@ -35,13 +33,15 @@ const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, mon
             <View className="week-number">{`第${weekIdx + 1}周`}</View>
             <View className="date-grid">
               {weekDays.map(day => {
+                const itemMood = bookData[day]?.mood
+                const skinType = getSkinType(itemMood);
                 return (
                 <View key={`day-${day}`} className="date-item">
                   {day}
-                  {bookData[day] && bookData[day]?.mood && (
+                  {itemMood && (
                     <Image
                       className="emoji"
-                      src={emojiMap[bookData[+day]?.mood]?.src}
+                      src={getEmojiMap(skinType)?.[itemMood]?.src}
                       mode="aspectFit"
                     />
                   )}
@@ -61,8 +61,9 @@ const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, mon
 
       {/* AI Summary */}
       <View className="ai-summary">
-        <View className="ai-summary-title">AI总结</View>
+        <View className="ai-summary-title">上帝视角(AI总结)</View>
         <View className="ai-summary-content">
+          程序员小姐姐正在马不停蹄开发中
           <View className="summary-item">五月关键词: 成长、热爱、小确幸。</View>
           <View className="summary-item"><Text className="icon">✅</Text>完成 [<Text>具体目标, 如 "21天晨跑"</Text>], 收获 [<Text>"自律即自由"</Text>];</View>
           <View className="summary-item"><Text className="icon">✨</Text>高光时刻: [<Text>"事件, 如 "陪父母看夕阳" "项目结案聚餐"</Text>];</View>

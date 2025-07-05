@@ -1,32 +1,34 @@
 import { useState, useRef, useEffect } from 'react';
 import { View, Text } from '@tarojs/components';
-import Taro from '@tarojs/taro';
 import { useAppSelector } from '@/store'
 import { MoodListMonthData } from '@/store/moods';
+
 
 import MoodCalendarSummary from '@components/MoodCalendarSummary';
 import PageHeader from '@components/PageHeader';
 
 import './index.less';
 
-const pages = Array.from({ length: 10 }).map((_, i) => ({
+const pages = Array.from({ length: 12 }).map((_, i) => ({
   // title: `Page${i + 1}`,
   content: `第${i + 1}页内容`
 }));
 
 export default function BookFlip() {
-  const [pairIndex, setPairIndex] = useState(new Date().getMonth()+1); // 当前左页索引，默认当前月份
+  const [pairIndex, setPairIndex] = useState(0); // 当前左页索引，默认从第0页开始
   const [isFlipping, setIsFlipping] = useState(false);
   const [flipPercent, setFlipPercent] = useState(0);
   const [currentYear, setCurrentYear] = useState(2025);
   const [bookData, setBookData] = useState<MoodListMonthData | null>(null);
   const [flipDirection, setFlipDirection] = useState<'left' | 'right' | null>(null);
   const touchStartX = useRef(0);
+
   const moodlist = useAppSelector((state) => state.mood.moodList);
 
   // 组件加载时获取情绪数据
   useEffect(() => {
     const result = moodlist.data
+ 
     setBookData(result);
   }, [moodlist]);
 
@@ -43,7 +45,7 @@ export default function BookFlip() {
   const handleTouchMove = (e) => {
     if (isFlipping) return;
     const moveX = e.touches[0].clientX - touchStartX.current;
-    if (moveX < 0 && pairIndex < pages.length - 2) {
+    if (moveX < 0 && pairIndex < pages.length - 1) {
       setFlipDirection('left');
       setFlipPercent(Math.max(moveX / 300, -1));
     } else if (moveX > 0 && pairIndex > 0) {
@@ -102,27 +104,39 @@ export default function BookFlip() {
         transition: isFlipping || Math.abs(flipPercent) === 1 ? 'transform 0.5s' : 'none',
       };
     }
+    if(!isFlipping && pairIndex === 0) {
+      return {
+        background: 'none'
+      }
+    }
     return { zIndex: 2 };
   };
 
   // 右页正反面内容
-  const getRightFrontContent = () => (
-    <View className='book-flip'>
-      {/* <Text className="book-title">{pages[pairIndex + 1]?.title || ''}</Text> */}
-      {/* <Text className="book-content">{pages[pairIndex + 1]?.content || ''}</Text> */}
-      {/* 2222222 */}
-      <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex} year={currentYear}/>
-    </View>
-  );
+  const getRightFrontContent = () => {
+    if (pairIndex === 0) {
+      return <View className='book-flip'><Text className="book-year">2025</Text></View>;
+    }
+    return (
+      <View className='book-flip'>
+        {/* <Text className="book-title">{pages[pairIndex + 1]?.title || ''}</Text> */}
+        {/* <Text className="book-content">{pages[pairIndex + 1]?.content || ''}</Text> */}
+        {/* 2222222 */}
+        <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex} year={currentYear}/>
+      </View>
+    );
+  };
 
 
   // 左页正反面内容
-  const getLeftFrontContent = () => (
-    <>
-      {/* <Text className="book-title">{pages[pairIndex]?.title || ''}</Text> */}
-      <Text className="book-content">{pages[pairIndex]?.content || ''}</Text>
-    </>
-  );
+  const getLeftFrontContent = () => {
+    return (
+      <>
+        {/* <Text className="book-title">{pages[pairIndex]?.title || ''}</Text> */}
+        <Text className="book-content">{pages[pairIndex]?.content || ''}</Text>
+      </>
+    );
+  };
 
 
   // 右侧静态页（翻动时显示pairIndex+3）
@@ -131,7 +145,6 @@ export default function BookFlip() {
       return (
         <View 
           className="book-page book-page-static book-page-right-static"
-          // style={isFlipping? {background: `url(${imgPageBg}) right center / 200% 100% no-repeat`}: {}}
         >
           {/* 11111 */}
           {/* <Text className="book-title">{pages[pairIndex + 3]?.title || ''}</Text> */}
@@ -149,7 +162,6 @@ export default function BookFlip() {
       return (
         <View
           className="book-page book-page-static book-page-left-static"
-          // style={isFlipping ? {background: `url(${imgPageBg}) left center / 200% 100% no-repeat`}: {}}
         >
           <MoodCalendarSummary bookData={bookData?.[pairIndex]} month={pairIndex+1} year={currentYear}/>
         </View>
@@ -158,15 +170,9 @@ export default function BookFlip() {
     return null;
   };
 
-  
-
-  const goBack = () => {
-    Taro.navigateBack();
-  };
-
   return (
     <View className="book-bg">
-      <PageHeader goBack={goBack} title="心情日记" />
+      <PageHeader title="心情日记" />
       <View className='book-title'>2025年</View>
       <View
         className="book-outer"
@@ -180,12 +186,12 @@ export default function BookFlip() {
         {getStaticRightContent()}
 
         {/* 左页（正反面） */}
-        <View className="book-page book-page-left" style={getLeftPageStyle()}>
+        <View className="book-page book-page-left" style={pairIndex === 0 ? { background: 'none' } : getLeftPageStyle()}>
           <View className="book-face book-face-front">{getLeftFrontContent()}</View>
           {/* <View className="book-face book-face-back">{getLeftBackContent()}</View> */}
         </View>
         {/* 右页（正反面） */}
-        <View className="book-page book-page-right" style={getRightPageStyle()}>
+        <View className={`book-page ${(!isFlipping && pairIndex === 0) ? 'book-page-cover' : 'book-page-right'}`} style={getRightPageStyle()}>
           <View className="book-face book-face-front">{getRightFrontContent()}</View>
           {/* <View className="book-face book-face-back">{getRightBackContent()}</View> */}
         </View>
