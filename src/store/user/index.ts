@@ -3,7 +3,7 @@ import { DataStatus, HasStatus } from '../interface';
 import { getUserInfoAction } from './actions';
 
 export interface UserInfo {
-  id: string;
+  userid: string;
   name: string;
   avatar: string;
   gender?: string;

@@ -107,7 +107,7 @@ export default function MoodDetail () {
           const uploadPromises = tempFilePaths.map((filePath, index) => {
             return new Promise<string>((resolve, reject) => {
               Taro.cloud.uploadFile({
-                cloudPath: `mood-images/${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}.jpg`,
+                cloudPath: `mood-images/${userInfo.data?.userid}/tmp/${Date.now()}_${index}_${Math.random().toString(36).substr(2, 9)}.jpg`,
                 filePath: filePath,
                 success: res => resolve(res.fileID),
                 fail: err => reject(err)
