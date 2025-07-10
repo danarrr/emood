@@ -61,7 +61,6 @@ export default function MoodRecord () {
   }, []);
 
 
- 
   useEffect(() => {
     setCurrentDialogue(getGreetingTxt(userInfo?.data?.birthdayMonth))
   }, [!!userInfo?.data?.birthdayMonth])

@@ -17,3 +17,13 @@ export const getMoodListAction = createAsyncThunk('moodSlice/getMoodListAction',
   });
 });
 
+
+// 获取带图片的mood列表
+export const getMoodDetailListAction = createAsyncThunk('moodSlice/getMoodDetailListAction', async ({data}: getMoodListPayload) => {
+  return await cloudRequest({
+    data,
+    path: '/mood/list?image=1',
+    method: 'GET',
+  });
+});
+

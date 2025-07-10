@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { getMoodListAction } from './actions';
+import { getMoodDetailListAction, getMoodListAction } from './actions';
 import {DataStatus, HasStatus } from '../interface';
 
 export enum MOOD_TYPE {
@@ -29,10 +29,15 @@ export type MoodListMonthData = {
 
 type State = {
   moodList: HasStatus<MoodListMonthData>
+  moodDetailList: HasStatus<MoodListMonthData>
 }
 
 const initialState: State = {
   moodList: {
+    status: DataStatus.INITIAL,
+    data: {}
+  },
+  moodDetailList: {
     status: DataStatus.INITIAL,
     data: {}
   }
@@ -59,6 +64,22 @@ export const moodSlice = createSlice({
         }
         state.moodList.status = DataStatus.SUCCESS;
         state.moodList.data = {...state.moodList.data, ...payload.data};
+        return state;
+      })
+      // 带图片的mood列表
+      .addCase(getMoodDetailListAction.pending, (state) => {
+        state.moodDetailList.status = DataStatus.PENDING;
+      })
+      .addCase(getMoodDetailListAction.rejected, (state) => {
+        state.moodDetailList.status = DataStatus.FAILED;
+      })
+      .addCase(getMoodDetailListAction.fulfilled, (state, { payload }) => {
+        if (!payload.data) {
+          state.moodDetailList.status = DataStatus.FAILED;
+          return state;
+        }
+        state.moodDetailList.status = DataStatus.SUCCESS;
+        state.moodDetailList.data = {...state.moodDetailList.data, ...payload.data};
         return state;
       });
   },

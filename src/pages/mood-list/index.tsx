@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import { useAppDispatch, useAppSelector } from '@/store';
-import { getMoodListAction } from '@/store/moods/actions'
+import { getMoodDetailListAction, getMoodListAction } from '@/store/moods/actions'
 
 import { getEmojiMap, getSkinType } from '@/utils/emojiMaps';
 
@@ -13,7 +13,11 @@ import IconMore from '@imgs/icon-more.png';
 import './index.less';
 import { cloudRequest } from '@/utils/request';
 import { getNowDateInfo } from '@/utils/date';
+import { DataStatus } from '@/store/interface';
 
+type MoodImage = {
+  imageUrl: string
+}
 
 interface MoodRecordItem {
   _id: string;
@@ -22,18 +26,17 @@ interface MoodRecordItem {
   day: number;
   mood: string; // 对应 emojiMap 的键
   content: string;
-  images?: string[]; // 云存储 fileID 数组
+  images?: MoodImage[]; // 云存储 fileID 数组
   createTime: string;
 }
 
 export default function MoodList() {
   const dispatch = useAppDispatch()
-  const moodlist = useAppSelector((state) => state.mood.moodList);
+  const moodDetailList = useAppSelector((state) => state.mood.moodDetailList);
   const router = useRouter();
   const { year, month } = router.params;
 
   const [moodRecords, setMoodRecords] = useState<MoodRecordItem[]>([]);
-  const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
   
@@ -44,27 +47,21 @@ export default function MoodList() {
     return emojiMapBySkin;
   }
 
+  // 仅首次生效
   useEffect(() => {
-    getMoodList(Number(year), Number(month));
+    if (moodRecords.length === 0 && moodDetailList.status === DataStatus.INITIAL) {
+      getMoodList(year, month);
+    }
   }, [year, month]);
 
   const getMoodList = async (year: number, month?: number) => {
-    setLoading(true);
-    setError(null);
-    try {
-      const allRecords = Object.values(moodlist.data?.[month] ?? {}) as MoodRecordItem[];
-      setMoodRecords(allRecords);
-    } catch (err) {
-      setError((err as Error).message);
-      Taro.showToast({
-        title: (err as Error).message,
-        icon: 'none',
-        duration: 2000,
-      });
-    } finally {
-      setLoading(false);
-    }
+    dispatch(getMoodDetailListAction({ data: {year, month} }))
   };
+
+  useEffect(() => {
+    const allRecords = Object.values(moodDetailList.data?.[`${month}`] ?? {}) as unknown as MoodRecordItem[]
+    setMoodRecords(allRecords);
+  }, [moodDetailList.data, month]);
 
   // 格式化日期显示（周几，几日）
   const formatDay = (dateStr: string) => {
@@ -75,12 +72,13 @@ export default function MoodList() {
     return `周${weekdays[date.getDay()]} ${day}日`;
   };
 
-  const reLoadMoodList = async(year, month) => {
+  const reLoadMoodList = async(year, month, index) => {
     await dispatch(getMoodListAction({ data: { year }}));
-    await getMoodList(Number(year), Number(month));
+    moodRecords.splice(index, 1);
+    setMoodRecords([...moodRecords]);
   }
 
-  const handleDelete = async (year: number, month: number, day: number) => {
+  const handleDelete = async (year: number, month: number, day: number, index: number) => {
     try {
       const res = await cloudRequest({
         path: 'mood/delete',
@@ -88,7 +86,7 @@ export default function MoodList() {
         data: { year, month, day }
       });
       if (res) { Taro.showToast({ title: '删除成功', icon: 'none'});
-        reLoadMoodList(year, month) // 刷新列表
+        reLoadMoodList(year, month, index) // 刷新列表
       }
     } catch (err) {
       Taro.showToast({ title: '删除失败' });
@@ -111,7 +109,7 @@ export default function MoodList() {
     Taro.navigateTo({ url });
   }
 
-  const handleEdit = (record) => {
+  const handleEdit = (record, index) => {
     const dateArr = record.dateStr.split('-');
 
     Taro.showActionSheet({
@@ -132,7 +130,8 @@ export default function MoodList() {
           handleDelete(
             dateArr[0],
             dateArr[1],
-            dateArr[2]
+            dateArr[2],
+            index
           )
         } 
       }
@@ -144,16 +143,15 @@ export default function MoodList() {
   return (
     <View className='mood-list-page'>
       <PageHeader title='心情列表' />
-      {loading && <Text className='loading-text'>加载中...</Text>}
-      {error && <Text className='error-text'>{error}</Text>}
-      {!loading && moodRecords.length === 0 && !error && (
+      {moodDetailList.status === DataStatus.PENDING && <Text className='loading-text'>加载中...</Text>}
+      {moodDetailList.status !== DataStatus.PENDING && moodRecords.length === 0 && !error && (
         <Text className='no-data-text'>暂无心情记录</Text>
       )}
       <ScrollView
         scrollY
         className='mood-list-scroll'
       >
-        {!loading && moodRecords.map((record) => {
+        {moodDetailList.status === DataStatus.SUCCESS && moodRecords.map((record, key) => {
           const { dateStr, mood, content, images } = record
           return (
             <View className='mood-list-item' key={record._id}>
@@ -161,20 +159,24 @@ export default function MoodList() {
                 <Text className='mood-list-item__date'>
                   {formatDay(dateStr)}
                 </Text>
-                <Image className='mood-list-item__more' src={IconMore} onClick={() => handleEdit(record)} />
+                <Image className='mood-list-item__more' src={IconMore} onClick={() => handleEdit(record, key)} />
               </View>
               <View className='mood-list-item__card'>
                 <Image src={getEmojiConfigMap(mood)?.[mood]?.src} className='mood-list-item__emoji' />
                 <Text className='mood-list-item__content'>
                   {content}
                 </Text>
-                {images && images.length > 0 && (
-                  <Image 
-                    src={images[0]} 
-                    className='mood-list-item__image' 
-                    mode='aspectFill' 
-                  />
-                )}
+                <View className='mood-list-item_image-box'>
+                  {images && images.length > 0 && images.map((item, key) => {
+                    return <Image 
+                      key={key}
+                      src={item.imageUrl} 
+                      className='mood-list-item__image' 
+                      mode='heightFix' 
+                    />
+                  })}
+                </View>
+                
               </View>
             </View>
           )
