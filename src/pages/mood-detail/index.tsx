@@ -8,7 +8,7 @@ import PageHeader from '@components/PageHeader'
 import { getFestivalBgImage } from '@/utils/festivalSetting'
 import { getSkinType, getEmojiMap } from '@/utils/emojiMaps'
 import { cloudRequest } from '@/utils/request'
-import { getNowDateInfo } from '@/utils/date'
+import { getDateInfo, getNowDateInfo } from '@/utils/date'
 
 
 import IconCamera from '@imgs/icon-camera@2x.png'
@@ -23,7 +23,7 @@ export default function MoodDetail () {
   const moodlist = useAppSelector((state) => state.mood.moodList);
   const userInfo = useAppSelector((state) => state.user.userInfo);
   const router = useRouter();
-  const { mood, date } = router.params as { mood?: string; date?: string };
+  const { id } = router.params as { id?: string };
 
   // 统一 detailInfo 管理所有数据
   const [detailInfo, setDetailInfo] = useState<{
@@ -32,36 +32,42 @@ export default function MoodDetail () {
     mood: string;
     dateInfo: { year: string; month: string; date: string };
   }>(() => {
-    // 1. 编辑场景
-    if (date) {
-      try {
-        const dateInfo = JSON.parse(decodeURIComponent(date));
-        // 查找已有记录
-        const record = moodlist.data?.[+dateInfo.month]?.[+dateInfo.date];
-        return {
-          images: (record?.imgs && Array.isArray(record.imgs)) ? record.imgs : [],
-          content: record?.content || '',
-          mood: record?.mood || mood || userInfo.data?.currentSkin || '',
-          dateInfo,
-        };
-      } catch {
-        // 解析失败 fallback
-        return {
-          images: [],
-          content: '',
-          mood: mood || userInfo.data?.currentSkin || '',
-          dateInfo: date ? JSON.parse(decodeURIComponent(date)) : getNowDateInfo(),
-        };
-      }
-    }
     // 2. 创建场景
     return {
+      id: null,
       images: [],
       content: '',
       mood: userInfo.data?.currentSkin || '',
       dateInfo: getNowDateInfo(),
     };
   });
+
+  // 带有id拉取指定数据
+  useEffect(() => {
+    if (id) {
+      cloudRequest({
+        path: `/mood?id=${id}`,
+        method: 'GET',
+      })
+      .then((res) => {
+        const { data } = res;
+        if (data) {
+          setDetailInfo({
+            images: (data.moodImages || []).map((item) => item.imageUrl),
+            content: data.content,
+            mood: data?.mood || '',
+            dateInfo: getDateInfo(data.dateStr),
+          })
+        } else {
+          Taro.showToast({ title: '心情记录不见了' });
+        }
+      })
+      .catch(() => {
+        Taro.showToast({ title: '获取记录失败' });
+      })
+    }
+  }, []);
+
   const [uploading, setUploading] = useState(false);
 
   // emojiConfigMap 用于渲染表情

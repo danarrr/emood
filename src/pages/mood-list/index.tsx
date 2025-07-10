@@ -20,7 +20,7 @@ type MoodImage = {
 }
 
 interface MoodRecordItem {
-  _id: string;
+  id: string;
   year: number;
   month: number;
   day: number;
@@ -93,17 +93,9 @@ export default function MoodList() {
     }
   }
 
-  const goTo = (route: string, data?: any) => {
-    const url = data 
-      ? `/pages/${route}/index?${Object.entries(data)
-          .map(([key, value]) => {
-            // 如果值是对象，需要先序列化
-            const paramValue = typeof value === 'object' 
-              ? encodeURIComponent(JSON.stringify(value))
-              : encodeURIComponent(String(value));
-            return `${key}=${paramValue}`;
-          })
-          .join('&')}`
+  const goTo = (route: string, id?: string) => {
+    const url = id 
+      ? `/pages/${route}/index?id=${id}`
       : `/pages/${route}/index`;
       
     Taro.navigateTo({ url });
@@ -117,15 +109,7 @@ export default function MoodList() {
       itemList: ['编辑', '删除'],
       success: function (res) {
         if (res.tapIndex === 0) {
-          
-          goTo('mood-detail', {
-            mood: record.mood,
-            date: JSON.stringify({
-              year: dateArr[0],
-              month: dateArr[1],
-              date: dateArr[2]
-            }) // 先序列化对象
-          })
+          goTo('mood-detail', record.id)
         } else if (res.tapIndex === 1) {
           handleDelete(
             dateArr[0],
@@ -154,7 +138,7 @@ export default function MoodList() {
         {moodDetailList.status === DataStatus.SUCCESS && moodRecords.map((record, key) => {
           const { dateStr, mood, content, images } = record
           return (
-            <View className='mood-list-item' key={record._id}>
+            <View className='mood-list-item' key={record.id}>
               <View className='mood-list-item__header'>
                 <Text className='mood-list-item__date'>
                   {formatDay(dateStr)}
