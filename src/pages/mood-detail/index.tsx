@@ -2,7 +2,7 @@ import { View, Image, Textarea, Text } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
 import { useState, useEffect } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store'
-import { getMoodListAction } from '@/store/moods/actions'
+import { getMoodDetailListAction, getMoodListAction } from '@/store/moods/actions'
 
 import PageHeader from '@components/PageHeader'
 import { getFestivalBgImage } from '@/utils/festivalSetting'
@@ -150,8 +150,8 @@ export default function MoodDetail () {
     }
     try {
       const result = await cloudRequest({
-        path: '/mood/save',
-        method: 'POST',
+        path: id ? `/mood/update?id=${id}` : '/mood/save',
+        method: id ? 'PUT' : 'POST',
         data: {
           year: Number(detailInfo.dateInfo?.year),
           month: Number(detailInfo.dateInfo?.month),
@@ -164,6 +164,8 @@ export default function MoodDetail () {
       if (result.statusCode === 200) {
         Taro.showToast({ title: '保存成功', icon: 'none' });
         dispatch(getMoodListAction({ data: { year: Number(detailInfo.dateInfo?.year) } }));
+        dispatch(getMoodDetailListAction({ data: {year: Number(detailInfo.dateInfo.year), month: Number(detailInfo.dateInfo.month)} }))
+        
         setTimeout(() => Taro.navigateBack(), 1500);
       } else {
         throw new Error(`保存失败: ${result.data?.message || '未知错误'}`);

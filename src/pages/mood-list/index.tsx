@@ -78,12 +78,11 @@ export default function MoodList() {
     setMoodRecords([...moodRecords]);
   }
 
-  const handleDelete = async (year: number, month: number, day: number, index: number) => {
+  const handleDelete = async (year: number, month: number, day: number, index: number, record: MoodRecordItem) => {
     try {
       const res = await cloudRequest({
-        path: 'mood/delete',
-        method: 'POST',
-        data: { year, month, day }
+        path: `mood/delete?id=${record.id}`,
+        method: 'DELETE'
       });
       if (res) { Taro.showToast({ title: '删除成功', icon: 'none'});
         reLoadMoodList(year, month, index) // 刷新列表
@@ -115,7 +114,8 @@ export default function MoodList() {
             dateArr[0],
             dateArr[1],
             dateArr[2],
-            index
+            index,
+            record
           )
         } 
       }
