@@ -2,18 +2,18 @@ import { useState, useEffect } from 'react';
 import { View, Text, Image, ScrollView } from '@tarojs/components';
 import Taro, { useRouter } from '@tarojs/taro';
 import { useAppDispatch, useAppSelector } from '@/store';
+import { DataStatus } from '@/store/interface';
 import { getMoodDetailListAction, getMoodListAction } from '@/store/moods/actions'
-
+import { cloudRequest } from '@/utils/request';
 import { getEmojiMap, getSkinType } from '@/utils/emojiMaps';
 
 import PageHeader from '@components/PageHeader';
 
 import IconMore from '@imgs/icon-more.png';
 
+// import { getNowDateInfo } from '@/utils/date';
+
 import './index.less';
-import { cloudRequest } from '@/utils/request';
-import { getNowDateInfo } from '@/utils/date';
-import { DataStatus } from '@/store/interface';
 
 type MoodImage = {
   imageUrl: string
@@ -34,10 +34,11 @@ export default function MoodList() {
   const dispatch = useAppDispatch()
   const moodDetailList = useAppSelector((state) => state.mood.moodDetailList);
   const router = useRouter();
-  const { year, month } = router.params;
+  const { year, month, day } = router.params;
 
   const [moodRecords, setMoodRecords] = useState<MoodRecordItem[]>([]);
   const [error, setError] = useState<string | null>(null);
+  const [scrollTargetId, setScrollTargetId] = useState<string | undefined>(undefined);
 
   
 
@@ -62,6 +63,25 @@ export default function MoodList() {
     const allRecords = Object.values(moodDetailList.data?.[`${month}`] ?? {}) as unknown as MoodRecordItem[]
     setMoodRecords(allRecords);
   }, [moodDetailList.data, month]);
+
+  useEffect(() => {
+
+    if (day && moodRecords.length > 0) {
+      const monthStr = String(month).padStart(2, '0');
+      const dayStr = String(day).padStart(2, '0');
+      const yearStr = String(year);
+      const target = moodRecords.find(
+        (item) =>
+          item.dateStr === `${yearStr}-${monthStr}-${dayStr}`
+      );
+      
+      if (target) {
+        setTimeout(() => {
+          setScrollTargetId(`mood-item-${target.dateStr}`);
+        }, 100);
+      }
+    }
+  }, [day, month, year, moodRecords]);
 
   // 格式化日期显示（周几，几日）
   const formatDay = (dateStr: string) => {
@@ -122,8 +142,6 @@ export default function MoodList() {
     })
   }
 
-
-
   return (
     <View className='mood-list-page'>
       <PageHeader title='心情列表' />
@@ -134,11 +152,16 @@ export default function MoodList() {
       <ScrollView
         scrollY
         className='mood-list-scroll'
+        scrollIntoView={scrollTargetId}
       >
-        {moodDetailList.status === DataStatus.SUCCESS && moodRecords.map((record, key) => {
-          const { dateStr, mood, content, images } = record
+        { moodRecords.map((record, key) => {
+          const { id, dateStr, mood, content, images } = record
           return (
-            <View className='mood-list-item' key={record.id}>
+            <View
+              className='mood-list-item'
+              key={id}
+              id={`mood-item-${dateStr}`}
+            >
               <View className='mood-list-item__header'>
                 <Text className='mood-list-item__date'>
                   {formatDay(dateStr)}

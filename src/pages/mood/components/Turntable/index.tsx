@@ -47,7 +47,9 @@ interface EmojiItem {
       
       const moveX = e.touches[0].clientX - touchStartX.current;
       
-      if (moveX > 30) { // 降低触发阈值
+      const SWIPE_THRESHOLD = 12; // 推荐10~15之间，越小越灵敏
+
+      if (moveX > SWIPE_THRESHOLD) {
         if (currentIndex > 0) {
           setIsAnimating(true);
           setCurrentIndex((prevIndex) => prevIndex - 1);
@@ -55,7 +57,7 @@ interface EmojiItem {
           touchStartX.current = e.touches[0].clientX;
           setTimeout(() => setIsAnimating(false), 300); // 动画结束后重置状态
         }
-      } else if (moveX < -30) { // 降低触发阈值
+      } else if (moveX < -SWIPE_THRESHOLD) {
         if (currentIndex < currentEmojiMap.length - 1) {
           setIsAnimating(true);
           setCurrentIndex((prevIndex) => prevIndex + 1);

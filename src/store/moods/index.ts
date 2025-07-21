@@ -42,8 +42,8 @@ try {
 
 const initialState: State = {
   moodList: {
-    status: DataStatus.INITIAL,
-    data: {}
+    status: Object.keys(cachedMoodList).length ? DataStatus.SUCCESS : DataStatus.INITIAL,
+    data: cachedMoodList
   },
   moodDetailList: {
     status: DataStatus.INITIAL,

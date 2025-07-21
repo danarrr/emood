@@ -23,7 +23,7 @@ export default function MoodDetail () {
   const moodlist = useAppSelector((state) => state.mood.moodList);
   const userInfo = useAppSelector((state) => state.user.userInfo);
   const router = useRouter();
-  const { id } = router.params as { id?: string };
+  const { id, mood, date } = router.params as { id?: string, mood?: string, date?: string };
 
   // 统一 detailInfo 管理所有数据
   const [detailInfo, setDetailInfo] = useState<{
@@ -32,13 +32,14 @@ export default function MoodDetail () {
     mood: string;
     dateInfo: { year: string; month: string; date: string };
   }>(() => {
+    
     // 2. 创建场景
     return {
       id: null,
       images: [],
       content: '',
-      mood: userInfo.data?.currentSkin || '',
-      dateInfo: getNowDateInfo(),
+      mood: mood || '',
+      dateInfo: date ? JSON.parse(decodeURIComponent(date)) : getNowDateInfo(),
     };
   });
 
@@ -69,6 +70,7 @@ export default function MoodDetail () {
   }, []);
 
   const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   // emojiConfigMap 用于渲染表情
   const [emojiConfigMap, setEmojiConfigMap] = useState(() => {
@@ -131,7 +133,8 @@ export default function MoodDetail () {
             });
         }
       });
-    } catch {
+    } catch(err){
+      if(err.errMsg.includes('cancel')) return;
       Taro.showToast({ title: '选择图片失败', icon: 'none' });
     }
   };
@@ -148,6 +151,7 @@ export default function MoodDetail () {
       Taro.showToast({ title: '请输入内容', icon: 'none' });
       return;
     }
+    setSaving(true);
     try {
       const result = await cloudRequest({
         path: id ? `/mood/update?id=${id}` : '/mood/save',
@@ -173,6 +177,7 @@ export default function MoodDetail () {
     } catch (error) {
       Taro.showToast({ title: (error as Error).message || '保存失败', icon: 'none' });
     }
+    setSaving(false);
   };
 
   // 格式化日期显示
@@ -254,14 +259,14 @@ export default function MoodDetail () {
             />
           </View>
           <View className='mood-detail__editor-save-status'>
-            {uploading ? '上传中...' : ''}
+            {uploading ? '上传中...' : saving ? '正在保存中...' : ''}
           </View>
         </View>
       </View>
       <Image
-        className='mood-detail__editor-save-button'
+        className={`mood-detail__editor-save-button${uploading || saving ? ' mood-detail__editor-save-button--disabled' : ''}`}
         src={IconPublish}
-        onClick={handleSave}
+        onClick={uploading || saving ? undefined : handleSave}
       />
     </View>
   );
