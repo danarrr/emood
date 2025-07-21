@@ -12,8 +12,8 @@ import './index.less'
 
 
 const skinOptions = [
-  { key:'all', name: '大人不做选择', desc: '这里是一段表情包的简介，这里是一段表情包的简介。', price: '29.9' },
-  { key:'emoji1', name: 'emoji', img: domin + '/emoji1/d.png?', desc: '这里是一段表情包的简介，这里是一段表情包的简介。', price: '6.9' },
+  { key:'all', name: '大人不做选择', desc: '一次购买永久享有所有表情包', price: '29.9' },
+  { key:'emoji1', name: 'emoji', img: domin + '/emoji1/d.png?', desc: '记录你的心情~', price: '6.9' },
   { key:'emoji2', name: '快乐小狗', img: domin + '/emoji2/d.png?' + sign, desc: '这里是一段表情包的简介，这里是一段表情包的简介。', price: '6.9' },
   { key:'emoji3', name: '美丽宝妈', img: domin + '/emoji3/a.png?', desc: '这里是一段表情包的简介，这里是一段表情包的简介。', price: '6.9' },
   { key:'emoji4', name: '牛马', img:  domin + '/emoji4/d.png?', desc: '这里是一段表情包的简介，这里是一段表情包的简介。', price: '6.9'  },
@@ -30,6 +30,9 @@ export default function EmojiList () {
   const dispatch = useAppDispatch();
 
   const handleShowModal = (item) => {
+    Taro.vibrateShort({
+      type: 'light'
+    });
     // 生成 a-i 的 9 个表情
     const arr = Array.from({ length: 9 }, (_, i) => {
       const char = String.fromCharCode(97 + i) // 97 是 'a'

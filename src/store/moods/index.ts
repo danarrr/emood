@@ -1,3 +1,4 @@
+import Taro from '@tarojs/taro';
 import { createSlice } from '@reduxjs/toolkit';
 import { getMoodListAction } from './actions';
 import {DataStatus, HasStatus } from '../interface';
@@ -31,10 +32,17 @@ type State = {
   moodList: HasStatus<MoodListMonthData>
 }
 
+let cachedMoodList = {};
+try {
+  cachedMoodList = Taro.getStorageSync('moodListCache') || {};
+} catch (e) {
+  cachedMoodList = {};
+}
+
 const initialState: State = {
   moodList: {
-    status: DataStatus.INITIAL,
-    data: {}
+    status: Object.keys(cachedMoodList).length ? DataStatus.SUCCESS : DataStatus.INITIAL,
+    data: cachedMoodList
   }
 }
 
@@ -59,6 +67,7 @@ export const moodSlice = createSlice({
         }
         state.moodList.status = DataStatus.SUCCESS;
         state.moodList.data = {...state.moodList.data, ...payload.data};
+        Taro.setStorageSync('moodListCache', state.moodList.data); // 更新缓存
         return state;
       });
   },

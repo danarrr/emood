@@ -1,0 +1,40 @@
+@bg-color: #EFEEE9;
+
+.index-page {
+  position: relative;
+  width: 100vw;
+  height: 100vh;
+  background: url('../../imgs/bg@2x.png') no-repeat center center / cover;
+  overflow: hidden;
+}
+
+.center-guide-text {
+  position: absolute;
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  opacity: 1;
+  transition: none;
+}
+.center-guide-text.show {
+  opacity: 1;
+}
+.guide-line1 {
+  color: #222;
+  font-size: 40px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  margin-bottom: 12px;
+}
+.guide-line2 {
+  color: #222;
+  font-size: 28px;
+  font-weight: 400;
+  letter-spacing: 0.08em;
+}

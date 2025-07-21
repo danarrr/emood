@@ -14,6 +14,9 @@ export default function UserCenter () {
   })
 
   const goTo = (route: string) => {
+    Taro.vibrateShort({
+      type: 'light'
+    });
     Taro.navigateTo({ url: `/pages/${route}/index` })
   }
 

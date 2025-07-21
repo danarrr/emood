@@ -1,3 +1,4 @@
+import Taro from '@tarojs/taro';
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { DataStatus, HasStatus } from '../interface';
 import { getUserInfoAction } from './actions';
@@ -13,14 +14,21 @@ export interface UserInfo {
   [key: string]: any;
 }
 
+let cachedUserInfo = null;
+try {
+  cachedUserInfo = Taro.getStorageSync('userInfoCache') || null;
+} catch (e) {
+  cachedUserInfo = null;
+}
+
 type State = {
   userInfo: HasStatus<UserInfo | null>;
 };
 
 const initialState: State = {
   userInfo: {
-    status: DataStatus.INITIAL,
-    data: null,
+    status: cachedUserInfo ? DataStatus.SUCCESS : DataStatus.INITIAL,
+    data: cachedUserInfo,
   },
 };
 
@@ -31,10 +39,12 @@ export const userSlice = createSlice({
     setUserInfo(state, action: PayloadAction<UserInfo>) {
       state.userInfo.data = action.payload;
       state.userInfo.status = DataStatus.SUCCESS;
+      Taro.setStorageSync('userInfoCache', action.payload);
     },
     clearUserInfo(state) {
       state.userInfo.data = null;
       state.userInfo.status = DataStatus.INITIAL;
+      Taro.removeStorageSync('userInfoCache');
     },
   },
   extraReducers: (builder) => {
@@ -52,6 +62,7 @@ export const userSlice = createSlice({
         }
         state.userInfo.status = DataStatus.SUCCESS;
         state.userInfo.data = payload.data;
+        Taro.setStorageSync('userInfoCache', payload.data);
         return state;
       });
   },

@@ -20,39 +20,39 @@ export const emoji1Config = {
 };
 
 export const emoji2Config = {
-  'emoji2a': { key: 'emoji2a', src: domin + '/emoji2/a.png?' + sign, text: '好' },
-  'emoji2b': { key: 'emoji2b', src: domin + '/emoji2/b.png?' + sign, text: '很棒' },
-  'emoji2c': { key: 'emoji2c', src: domin + '/emoji2/c.png?' + sign, text: '一般' },
-  'emoji2d': { key: 'emoji2d', src: domin + '/emoji2/d.png?' + sign, text: '累' },
-  'emoji2e': { key: 'emoji2e', src: domin + '/emoji2/e.png?' + sign, text: '心动' },
-  'emoji2f': { key: 'emoji2f', src: domin + '/emoji2/f.png?' + sign, text: '忧郁' },
-  'emoji2g': { key: 'emoji2g', src: domin + '/emoji2/g.png?' + sign, text: '生气' },
-  'emoji2h': { key: 'emoji2h', src: domin + '/emoji2/h.png?' + sign, text: '平静' },
-  'emoji2i': { key: 'emoji2i', src: domin + '/emoji2/i.png?' + sign, text: '焦虑' },
+  'emoji2a': { key: 'emoji2a', src: domin + '/emoji2/a.png?' + sign, text: '' },
+  'emoji2b': { key: 'emoji2b', src: domin + '/emoji2/b.png?' + sign, text: '' },
+  'emoji2c': { key: 'emoji2c', src: domin + '/emoji2/c.png?' + sign, text: '' },
+  'emoji2d': { key: 'emoji2d', src: domin + '/emoji2/d.png?' + sign, text: '' },
+  'emoji2e': { key: 'emoji2e', src: domin + '/emoji2/e.png?' + sign, text: '' },
+  'emoji2f': { key: 'emoji2f', src: domin + '/emoji2/f.png?' + sign, text: '' },
+  'emoji2g': { key: 'emoji2g', src: domin + '/emoji2/g.png?' + sign, text: '' },
+  'emoji2h': { key: 'emoji2h', src: domin + '/emoji2/h.png?' + sign, text: '' },
+  'emoji2i': { key: 'emoji2i', src: domin + '/emoji2/i.png?' + sign, text: '' },
 };
 
 export const emoji3Config = {
-  'emoji3a': { key: 'emoji3a', src: domin + '/emoji3/a.png?' + sign, text: '好' },
-  'emoji3b': { key: 'emoji3b', src: domin + '/emoji3/b.png?' + sign, text: '很棒' },
-  'emoji3c': { key: 'emoji3c', src: domin + '/emoji3/c.png?' + sign, text: '一般' },
-  'emoji3d': { key: 'emoji3d', src: domin + '/emoji3/d.png?' + sign, text: '累' },
-  'emoji3e': { key: 'emoji3e', src: domin + '/emoji3/e.png?' + sign, text: '心动' },
+  'emoji3a': { key: 'emoji3a', src: domin + '/emoji3/a.png?' + sign, text: '哄睡奔溃' },
+  'emoji3b': { key: 'emoji3b', src: domin + '/emoji3/b.png?' + sign, text: '辅食大作战' },
+  'emoji3c': { key: 'emoji3c', src: domin + '/emoji3/c.png?' + sign, text: '捣蛋' },
+  'emoji3d': { key: 'emoji3d', src: domin + '/emoji3/d.png?' + sign, text: '晒娃时刻' },
+  'emoji3e': { key: 'emoji3e', src: domin + '/emoji3/e.png?' + sign, text: 'Free Time(做自己)' },
   'emoji3f': { key: 'emoji3f', src: domin + '/emoji3/f.png?' + sign, text: '忧郁' },
   'emoji3g': { key: 'emoji3g', src: domin + '/emoji3/g.png?' + sign, text: '生气' },
-  'emoji3h': { key: 'emoji3h', src: domin + '/emoji3/h.png?' + sign, text: '平静' },
-  'emoji3i': { key: 'emoji3i', src: domin + '/emoji3/i.png?' + sign, text: '焦虑' },
+  'emoji3h': { key: 'emoji3h', src: domin + '/emoji3/h.png?' + sign, text: '生病了' },
+  'emoji3i': { key: 'emoji3i', src: domin + '/emoji3/i.png?' + sign, text: '治愈' },
 };
 
 export const emoji4Config = {
-  'emoji4a': { key: 'emoji4a', src: domin + '/emoji4/a.png?' + sign, text: '好' },
-  'emoji4b': { key: 'emoji4b', src: domin + '/emoji4/b.png?' + sign, text: '很棒' },
-  'emoji4c': { key: 'emoji4c', src: domin + '/emoji4/c.png?' + sign, text: '一般' },
-  'emoji4d': { key: 'emoji4d', src: domin + '/emoji4/d.png?' + sign, text: '累' },
-  'emoji4e': { key: 'emoji4e', src: domin + '/emoji4/e.png?' + sign, text: '心动' },
-  'emoji4f': { key: 'emoji4f', src: domin + '/emoji4/f.png?' + sign, text: '忧郁' },
-  'emoji4g': { key: 'emoji4g', src: domin + '/emoji4/g.png?' + sign, text: '生气' },
-  'emoji4h': { key: 'emoji4h', src: domin + '/emoji4/h.png?' + sign, text: '平静' },
-  'emoji4i': { key: 'emoji4i', src: domin + '/emoji4/i.png?' + sign, text: '焦虑' },
+  'emoji4a': { key: 'emoji4a', src: domin + '/emoji4/a.png?' + sign, text: 'Passion!' },
+  'emoji4b': { key: 'emoji4b', src: domin + '/emoji4/b.png?' + sign, text: '撑住' },
+  'emoji4c': { key: 'emoji4c', src: domin + '/emoji4/c.png?' + sign, text: '治愈' },
+  'emoji4d': { key: 'emoji4d', src: domin + '/emoji4/d.png?' + sign, text: '休time' },
+  'emoji4e': { key: 'emoji4e', src: domin + '/emoji4/e.png?' + sign, text: '蕉绿' },
+  'emoji4f': { key: 'emoji4f', src: domin + '/emoji4/f.png?' + sign, text: '摸鱼' },
+  'emoji4g': { key: 'emoji4g', src: domin + '/emoji4/g.png?' + sign, text: '咖啡续命' },
+  'emoji4h': { key: 'emoji4h', src: domin + '/emoji4/h.png?' + sign, text: '笑着活下去' },
+  'emoji4i': { key: 'emoji4i', src: domin + '/emoji4/i.png?' + sign, text: '进度拉满' },
 };
 
 export const emoji5Config = {

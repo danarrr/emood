@@ -54,10 +54,10 @@ export default function MoodRecord () {
   
   // 组件加载时获取情绪数据
   useEffect(() => {
-    if (moodList.status === DataStatus.INITIAL) {
+    // if (moodList.status === DataStatus.INITIAL) {
       getUserInfo();
       getMoodList({ year: +currentMonthInfo.year }); // 不用传userID, jwt直接验签？ @bapeLin
-    }
+    // }
   }, []);
 
 

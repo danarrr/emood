@@ -12,6 +12,45 @@ import IconImage from '@imgs/icon-pic@2x.png'
 
 import './index.less'
 
+const MEMBER_BENEFITS = {
+  // 半年
+  0: [
+    {
+      icon: IconSkin,
+      title: "皮肤全解锁",
+      tip: "180天有效期"
+    },
+    {
+      icon: IconAi,
+      title: "AI总结",
+      tip: "300个星光"
+    },
+    {
+      icon: IconImage,
+      title: "上传图片",
+      tip: "180天不限张数"
+    }
+  ],
+  // 一年
+  1: [
+    {
+      icon: IconSkin,
+      title: "皮肤全解锁",
+      tip: "365天有效期"
+    },
+    {
+      icon: IconAi,
+      title: "AI总结",
+      tip: "700个星光"
+    },
+    {
+      icon: IconImage,
+      title: "上传图片",
+      tip: "365天不限张数"
+    }
+  ]
+};
+
 export default function MemberPlan () {
   const [activeIndex, setActiveIndex] = useState(0);
   const userInfo = useAppSelector(state => state.user.userInfo.data);
@@ -81,33 +120,19 @@ export default function MemberPlan () {
       </Swiper>
       <View className='member-plan__benefits-title'>- 尊享会员3大权益 -</View>
       <View className='member-plan__benefits'>
-        <View className='member-plan__benefit'>
-          <Image src={IconSkin}></Image>
-          <View className='member-plan__benefit-text'>
-            皮肤全解锁
-            <View className='member-plan__benefit-tip'>180天有效期</View>
+        {MEMBER_BENEFITS[activeIndex].map(ben => (
+          <View className='member-plan__benefit'>
+            <Image src={ben.icon}></Image>
+            <View className='member-plan__benefit-text'>
+              {ben.title}
+              <View className='member-plan__benefit-tip'>{ben.tip}</View>
+            </View>
           </View>
-        </View>
-        <View className='member-plan__benefit'>
-          <Image src={IconAi}></Image>
-          <View className='member-plan__benefit-text'>
-            AI聊天
-            <View className='member-plan__benefit-tip'>300个星光</View>
-          </View>
-        </View>
-        <View className='member-plan__benefit'>
-          <Image src={IconImage}></Image>
-          <View className='member-plan__benefit-text'>上传图片
-            <View className='member-plan__benefit-tip'>不限张数</View>
-          </View>
-        </View>
+        ))}
       </View>
       <View className='member-plan__guide-title'>商品支付指南</View>
       <View className='member-plan__guide'>
-        根据所选选项，这是按月或按年计费的订阅产品。对于应用内支付，订阅将在 App Store 指定的日期处理。<br/>
-        当前订阅到期结束前的24小时内，订阅将自动续订。您可以在 Apple帐户设置中管理和取消订阅。<br/>
-        当前订阅费用将从您的 Apple帐户扣除。<br/>
-        有关付款或退款的查询，请联系 Apple 客服。
+        微信支付功能未上线，如有诉求请添加客服🌏danarrr即可开通。
       </View>
       <Button className='member-plan__pay-btn' onClick={handlePayClick}>立即支付</Button>
     </View>
