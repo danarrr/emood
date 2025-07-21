@@ -78,10 +78,15 @@
     margin-top: 10px;
   }
 
-  &__image {
-    width: 100%;
-    height: 100px; /* 根据图片调整高度 */
-    border-radius: 4px;
-    object-fit: cover;
+  &_image-box {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    .mood-list-item__image {
+      height: 100px; /* 根据图片调整高度 */
+      border-radius: 4px;
+      object-fit: cover;
+    }
   }
+  
 } 

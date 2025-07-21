@@ -14,6 +14,15 @@ export function getNowDateInfo(): MonthInfo {
   };
 }
 
+export function getDateInfo(dataString: string): MonthInfo {
+  const curr = new Date(dataString);
+  return {
+    month: (curr.getMonth() + 1).toString(),
+    year: curr.getFullYear().toString(),
+    date: curr.getDate().toString(),
+  };
+}
+
 
 export const isFuture = (year, month, day) => {
   const today = new Date();
