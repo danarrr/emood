@@ -273,10 +273,10 @@ export default function MoodDetail () {
           onInput={handleContentChange}
           maxlength={-1}
           autoHeight
-          showConfirmBar={false}
+          // showConfirmBar={false}
           cursorSpacing={50}
           adjustPosition={true}
-          holdKeyboard={true}
+          // holdKeyboard={true}
         />
         {/* 图片预览区域 */}
         {detailInfo.images.length > 0 && (

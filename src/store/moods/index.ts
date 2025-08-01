@@ -71,7 +71,7 @@ export const moodSlice = createSlice({
           return state;
         }
         state.moodList.status = DataStatus.SUCCESS;
-        state.moodList.data = {...state.moodList.data, ...payload.data};
+        state.moodList.data = {...payload.data};
         Taro.setStorageSync('moodListCache', state.moodList.data); // 更新缓存
         return state;
       })

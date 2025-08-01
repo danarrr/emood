@@ -67,12 +67,18 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handle
            
           }
           // 超过今天的日期不可点击
+          const isFutureDate = isFuture(year, month, dayNumber);
           return (
-            <View key={dayNumber} className='mood-calendar__day' onClick={
-              isFuture(year, month, dayNumber) ? undefined : (
-                () => emojiSrc ? goToMoodList(emojiSrc, dayNumber) 
-                 : handleSltMood({ year, month, date:dayNumber})
-              )}>
+            <View 
+              key={dayNumber} 
+              className={`mood-calendar__day${isFutureDate ? ' mood-calendar__day--future' : ''}`} 
+              onClick={
+                isFutureDate ? undefined : (
+                  () => emojiSrc ? goToMoodList(emojiSrc, dayNumber) 
+                   : handleSltMood({ year, month, date:dayNumber})
+                )
+              }
+            >
               {dayNumber}
               {emojiSrc && (
                 <Image 

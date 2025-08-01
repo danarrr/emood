@@ -65,8 +65,7 @@ const UserProfile: React.FC<UserProfileProps> = ({
           className='user-profile__nickname' 
           type='nickname'
           value={nickName}
-          onInput={onNickNameChange}
-          onClick={onNickNameChange}
+          onFocus={onNickNameChange}
           onSelectionChange={onNickNameChange}
         />
         <View className='user-profile__vip-status'>{vipStatus}</View>
