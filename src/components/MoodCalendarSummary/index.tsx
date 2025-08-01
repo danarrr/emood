@@ -6,9 +6,8 @@ function getDaysInMonth(year: number, month: number) {
   return new Date(year, month, 0).getDate();
 }
 
-const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, month: number, bookData: any }) => {
+const MoodCalendarSummary = ({ bookData = {}, year, month, monthAnalyses = {} }: { year: number, month: number, bookData: any, monthAnalyses?: {[key: string]: any} }) => {
   const daysInMonth = getDaysInMonth(year, month);
-
   // 计算每周的天数
   const weeks: number[][] = [];
   let week: number[] = [];
@@ -61,14 +60,9 @@ const MoodCalendarSummary = ({ bookData = {}, year, month }: { year: number, mon
 
       {/* AI Summary */}
       <View className="ai-summary">
-        <View className="ai-summary-title">上帝视角(AI总结)</View>
+        <View className="ai-summary-title">上帝视角</View>
         <View className="ai-summary-content">
-          程序员小姐姐正在马不停蹄开发中
-          <View className="summary-item">五月关键词: 成长、热爱、小确幸。</View>
-          <View className="summary-item"><Text className="icon">✅</Text>完成 [<Text>具体目标, 如 "21天晨跑"</Text>], 收获 [<Text>"自律即自由"</Text>];</View>
-          <View className="summary-item"><Text className="icon">✨</Text>高光时刻: [<Text>"事件, 如 "陪父母看夕阳" "项目结案聚餐"</Text>];</View>
-          <View className="summary-item"><Text className="icon">⚠️</Text>待改进: [<Text>“不足, 如 “拖延习惯”</Text>];</View>
-          <View className="summary-item"><Text className="icon">✨</Text>六月期许: 心怀[<Text>“关键词, 如 “热忱” “松弛感”</Text>], 奔赴新程。</View>
+          {monthAnalyses?.content || '正在分析中...'}
         </View>
       </View>
     </View>

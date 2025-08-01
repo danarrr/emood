@@ -3,7 +3,6 @@ import { View, Image, Swiper, SwiperItem } from '@tarojs/components'
 import Taro from '@tarojs/taro'
 import { useAppDispatch, useAppSelector } from '@/store'
 
-import { DataStatus } from '@/store/interface'
 import { getMoodListAction } from '@/store/moods/actions'
 import { getUserInfoAction } from '@/store/user/actions'
 
@@ -17,6 +16,7 @@ import { getNowDateInfo } from '@utils/date'
 import avatar from '@imgs/face@2x-3.png'
 import userCenter from '@imgs/icon-mine@2x.png'
 import book from '@imgs/icon-god@2x.png'
+import addPlus from '@imgs/icon-new@2x.png'
 import maskTitle from '@imgs/pic-txt@2x.png'
 
 import './index.less'
@@ -184,7 +184,8 @@ export default function MoodRecord () {
           <Image className='mood-tabbar__icon' src={userCenter} />
         </View>
         <View className='mood-tabbar__item mood-tabbar__item--center' onClick={handleOpenSltMoodMask}>
-          <View className='mood-tabbar__plus'>＋</View>
+          {/* <View className='mood-tabbar__plus'>＋</View> */}
+          <Image className='mood-tabbar__plus' src={addPlus} />
         </View>
         <View
           className='mood-tabbar__item'

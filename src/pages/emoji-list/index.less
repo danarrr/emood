@@ -3,9 +3,15 @@
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 48px 12px;
-    height: 70vh;
-    margin: 24px 12px 40px 12px;
+    height: 75vh;
+    margin: -18px 12px 0px 12px;
+    padding-top: 18px;
     overflow-y: scroll;
+    scrollbar-width: none; /* Firefox */
+    -ms-overflow-style: none; /* IE and Edge */
+    &::-webkit-scrollbar {
+      display: none; /* Chrome, Safari and Opera */
+    }
   }
 }
 
@@ -73,12 +79,17 @@
 
   &-close {
     position: absolute;
-    top: 18px;
-    right: 22px;
+    top: 12px;
+    right: 18px;
     font-size: 36px;
     color: #888;
     z-index: 2;
     cursor: pointer;
+    width: 44px;
+    height: 44px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   &-top {
@@ -94,6 +105,19 @@
   &-img {
     width: 100px;
     height: 100px;
+  }
+
+  &-all-text {
+    font-size: 48px;
+    font-weight: bold;
+    color: #222;
+    background: #EFEEE9;
+    width: 100px;
+    height: 100px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 }
 

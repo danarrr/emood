@@ -5,6 +5,11 @@
 .book-bg {
   min-height: 100vh;
   overflow: hidden;
+  // // background: #f3f2ed;
+  // display: flex;
+  // flex-direction: column;
+  // align-items: center;
+  // justify-content: center;
 }
 
 .book-outer {
@@ -15,7 +20,9 @@
   display: flex;
   justify-content: center;
   align-items: center;
-  transform: rotate(-4deg) translateX(-47%);
+  transform: rotate(-4deg) translateX(-45%);
+  // transform: rotate(0deg) translateX(-45%);
+
 }
 
 .book-page {
@@ -23,6 +30,9 @@
   top: 0;
   width: @page-width;
   height: 110%;
+  // background: url('../../imgs/pic-book@3x.png') right center / 200% 100% no-repeat;
+  // background: transparent;
+  // border-radius: 14px;
   z-index: 2;
   backface-visibility: hidden;
   .book-face {
@@ -31,23 +41,32 @@
     height: 100%;
     backface-visibility: hidden;
     display: flex;
+    // flex-direction: column;
+    // align-items: center;
+    // padding: 32px 0px 0 0px;
+    // border-radius: 14px;
+  
+    // background: #fff;
   }
   .book-face-back {
     // border: 1px solid orange;
     width: 100%;
     transform: rotateY(180deg);
+    // background: green;
     background: #f3f2ed;
     color: #bbb;
   }
 }
 
 .book-page-left {
-  left: 0px;
-  background: url('../../../imgs/pic-book@3x.png') 20px center / 200% 100% no-repeat;
+  // border: 1px solid green;
+  left: -20px; // 勿删
+  // left: 0px;
+  background: url('../../../imgs/pic-book@3x.png') left center / 200% 100% no-repeat;
   transform-origin: 100% 50%; 
 }
 .book-page-right {
-  left: calc(@page-width);
+  left: calc(@page-width - 20px);
   transform-origin: 0% 50%;
   background: url('../../../imgs/pic-book@3x.png') right center / 200% 100% no-repeat;
 
@@ -61,18 +80,22 @@
 }
 
 .book-page-static {
+  // border: 1px solid blue;
   position: absolute;
   top: 0;
   width: @page-width;
   height: 110%;
   // background: url('../../imgs/pic-book@3x.png') right center / 200% 100% no-repeat;
+
   z-index: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
+  // padding: 32px 18px 0 18px;
 }
 .book-page-right-static {
-  left: calc(@page-width);
+  // border: 1px solid red;
+  left: calc(@page-width - 20px);
   background: url('../../../imgs/pic-book@3x.png') right center / 200% 100% no-repeat;
 }
 .book-page-left-static {
@@ -81,7 +104,14 @@
 }
 
 .book-center-line {
+  // position: absolute;
+  // left: @page-width;
+  // top: 10px;
+  // bottom: 10px;
   width: @center-line-width;
+  // background: #7be141;
+  // border-radius: 2px;
+  // z-index: 3;
 }
 
 .book-year {
@@ -99,14 +129,24 @@
 
 .book-title {
   font-size: 30px;
+  // margin: 20px 0;
   text-align: center;
   color: #383838;
+  // font-size: 22px;
+  // font-weight: 600;
+  // color: #888;
+  // margin-bottom: 12px;
 }
 .book-content {
+  // padding: 24px;
   width: 100%;
+  // border: 1px solid red;
+  // background: url('../../imgs/pic-page@3x.png') center center / 100% 100% no-repeat;
   font-size: 16px;
   color: #333;
   text-align: center;
 }
-// .book-flip {
-// }
+.book-flip {
+  // background: green;
+  // background: url('../../imgs/pic-page@3x.png');
+}

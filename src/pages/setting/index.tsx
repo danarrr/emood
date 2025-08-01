@@ -18,15 +18,13 @@ import IconArrowRight from '@imgs/icon-right@2x.png';
 import './index.less';
 
 
-
-
 const skinOptions = {
-  'emoji1': '快乐小狗',
-  'emoji2': '美丽宝妈',
-  'emoji3': '元气少年',
-  'emoji4': '元气少年',
-  'emoji5': '元气少年',
-  'emoji6': '元气少年',
+  'emoji1': 'emoji',
+  'emoji2': '快乐小狗',
+  'emoji3': '美丽宝妈',
+  'emoji4': '牛马',
+  'emoji5': '女生',
+  'emoji6': '怪蜀黍',
 }
 
 // 皮肤选项生成函数
@@ -80,13 +78,27 @@ export default function Setting() {
       text: '联系客服',
       onClick: () => {
         Taro.showToast({
-          title: '正在施工中，需要添加客服：🌏danarrr',
+          title: '正在施工中，需要添加客服🌏：danarrr',
           icon: 'none', // 不显示图标
           duration: 5000 // 显示时长，单位 ms
         })
        }
     },
   ];
+
+
+  const getHasSkinList = async() =>{
+    console.log('没有进来就请求吗')
+    if (!userInfo.userid) return;
+    const { data } = await cloudRequest({
+      path: '/skin/list', // 业务自定义路径和参数
+      method: 'GET', // 根据业务选择对应方法
+      data: {
+        userId: userInfo.userid,
+      }
+    })
+    setSkinList(data)
+  }
 
   useEffect(() => {
     getHasSkinList();
@@ -102,7 +114,7 @@ export default function Setting() {
         setSelectedSkin('');
       }
     }
-  }, [hasSkinList, userInfo.currentSkin]);
+  }, [userInfo.currentSkin]);
 
   // 回填生日月
   useEffect(() => {
@@ -111,17 +123,7 @@ export default function Setting() {
     }
   }, [userInfo.birthdayMonth]);
 
-  const getHasSkinList = async() =>{
-    if (!userInfo.userid) return;
-    const { data } = await cloudRequest({
-      path: '/skin/list', // 业务自定义路径和参数
-      method: 'GET', // 根据业务选择对应方法
-      data: {
-        userId: userInfo.userid,
-      }
-    })
-    setSkinList(data)
-  }
+
 
 
   const updateUserInfo = async(data) => {
@@ -143,7 +145,7 @@ export default function Setting() {
   const selectedSkinIndex = skinRange.findIndex(s => s === selectedSkin);
   // 当前生日月索引
   const selectedMonthIndex = monthList.findIndex(m => selectedMonth.replace('月', '') === m);
-
+console.log('settingItems', settingItems)
   return (
     <View className='setting-page'>
       <PageHeader title='设置' />
@@ -155,7 +157,7 @@ export default function Setting() {
               <Text className='setting-item__text'>{item.text}</Text>
             </View>
            
-            {item.range ? 
+            {item.range?.length > 0 ? 
             <Picker
               mode="selector"
               range={item.range}

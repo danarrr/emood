@@ -1,12 +1,13 @@
-import { View, Image, Text } from '@tarojs/components'
-import Taro, { useLoad } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { useEffect, useState } from 'react'
+import { View, Image, Text } from '@tarojs/components'
 import { useAppSelector, useAppDispatch } from '@/store';
+import { getUserInfoAction } from '@/store/user/actions';
 import PageHeader from '@components/PageHeader'
 import Greeting from '@components/Greeting'
 import { domin, sign } from '@/utils/emojiMaps';
 import { cloudRequest } from '@/utils/request'
-import { getUserInfoAction } from '@/store/user/actions';
+
 
 import './index.less'
 
@@ -77,7 +78,7 @@ export default function EmojiList () {
     //   }
     // })
     Taro.showToast({
-      title: '正在施工中，需要添加客服：🌏danarrr',
+      title: '正在施工中，需要添加客服🌏：danarrr',
       icon: 'none', // 不显示图标
       duration: 5000 // 显示时长，单位 ms
     })
@@ -133,9 +134,16 @@ export default function EmojiList () {
       {showModal && previewEmojis.length > 0 && (
         <View className='emoji-list__modal-mask' onClick={() => setShowModal(false)}>
           <View className='emoji-list__modal' onClick={e => e.stopPropagation()}>
-            <View className='emoji-list__modal-close' onClick={() => setShowModal(false)}>×</View>
+            <View className='emoji-list__modal-close' onClick={() => {
+              Taro.vibrateShort({ type: 'light' });
+              setShowModal(false);
+            }}>×</View>
             <View className='emoji-list__modal-top'>
-              <Image className='emoji-list__modal-img' src={previewEmojis[0].img} />
+              {modalItem === 'all' ? (
+                <Text className='emoji-list__modal-all-text'>ALL</Text>
+              ) : (
+                <Image className='emoji-list__modal-img' src={previewEmojis[0].img} />
+              )}
             </View>
             <View className='emoji-list__modal-info'>
               <View className='emoji-list__modal-name'>{previewEmojis[0].name}</View>

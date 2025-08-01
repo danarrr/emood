@@ -1,8 +1,8 @@
 export default defineAppConfig({
   pages: [
     'pages/mood/index',
-    'pages/index/index',
-    'pages/animation/index',
+    // 'pages/index/index',
+    // 'pages/animation/index',
     'pages/mood-detail/index',
     'pages/mood-list/index',
     'pages/member-plan/index',
@@ -27,4 +27,10 @@ export default defineAppConfig({
     navigationBarTextStyle: 'black',
     navigationStyle: 'custom'
   }, 
+  "plugins": {
+    "WechatSI": {
+      "version": "0.0.7",
+      "provider": "wx069ba97219f66d99"
+    }
+  }
 })

@@ -1,3 +1,4 @@
+import Taro from '@tarojs/taro';
 import { useRef, useState, useImperativeHandle, forwardRef, useEffect } from 'react';
 import { View, Image } from '@tarojs/components';
 import { useAppSelector } from '@/store';
@@ -32,8 +33,9 @@ interface EmojiItem {
   useEffect(() => {
     const currentSkin = userInfo.data?.currentSkin
     const emojiMap = getEmojiMap(currentSkin, 'arr')
-    setCurrentEmojiMap(emojiMap);
-
+    if (emojiMap) {
+      setCurrentEmojiMap(emojiMap);
+    }
   }, [userInfo.status === 'success'])
 
   useImperativeHandle(ref, () => ({
@@ -55,6 +57,8 @@ interface EmojiItem {
           setCurrentIndex((prevIndex) => prevIndex - 1);
           setOffset(prev => prev + (360 / currentEmojiMap.length));
           touchStartX.current = e.touches[0].clientX;
+          // 添加震动效果
+          Taro.vibrateShort({ type: 'light' });
           setTimeout(() => setIsAnimating(false), 300); // 动画结束后重置状态
         }
       } else if (moveX < -SWIPE_THRESHOLD) {
@@ -63,6 +67,8 @@ interface EmojiItem {
           setCurrentIndex((prevIndex) => prevIndex + 1);
           setOffset(prev => prev - (360 / currentEmojiMap.length));
           touchStartX.current = e.touches[0].clientX;
+          // 添加震动效果
+          Taro.vibrateShort({ type: 'light' });
           setTimeout(() => setIsAnimating(false), 300); // 动画结束后重置状态
         }
       }

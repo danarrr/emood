@@ -1,6 +1,7 @@
 .mood {
-  padding-bottom: 100px;
+  // padding-bottom: 100px;
   box-sizing: border-box;
+  height: 100%;
 
   &-swiper {
     width: 100%;
@@ -83,15 +84,7 @@
   &__plus {
     width: 47px;
     height: 47px;
-    background: #383838;
-    color: #fff;
-    border-radius: 50%;
-    font-size: 30px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    box-shadow: 0 2px 12px #ececec;
-    border: 6px solid #fafaf7;
+    margin-bottom: 10px;
   }
 }
 
@@ -110,9 +103,11 @@
   flex-direction: column;
 
   &__title {
-    margin-left: -90%;
-    width: 151px;
-    height: 28px;
+    position: absolute;
+    left: 35%;
+    top: 75%;
+    width: 142px;
+    height: 26px;
   }
 
   &__content {

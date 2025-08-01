@@ -26,11 +26,47 @@ export default function BookFlip() {
   const touchStartX = useRef(0);
 
   const moodlist = useAppSelector((state) => state.mood.moodList);
+  const auth = 'Bearer pat_0GsD8tD8u4JEf8uFj4klE7SrCfRfvMS1t95MnudjxIpVWuxvImvahyOZqobCJL7C'
 
   useEffect(() => {
     // getAnalyse()
     getMoodAnalyse()
   },[])
+  // const getAnalyse = async() => {
+    
+  //   // async function callCozeChat() {
+  //     // try {
+  //     //   const result =  await Taro.request({
+  //     //     url: 'https://api.coze.cn/v3/chat?', // 注意去掉问号
+  //     //     method: 'POST',
+  //     //     header: {
+  //     //       'Authorization': auth,
+  //     //       'Content-Type': 'application/json'
+  //     //     },
+  //     //     data: {
+  //     //       bot_id: '7530098047934955574',
+  //     //       user_id: '123456789',
+  //     //       stream: false,
+  //     //       additional_messages: [
+  //     //         {
+  //     //           content: '这两天处理了好多内容，又是创业又是要盯装修，身心俱疲的感觉（使用的你的workflow来回答我的问题，不需要自己再次思考直接返回workflow的内容给我即可）',
+  //     //           content_type: 'text',
+  //     //           role: 'user',
+  //     //           type: 'question'
+  //     //         }
+  //     //       ],
+  //     //       parameters: {}
+  //     //     }
+  //     //   });
+  //     //   if(result) {
+  //     //     getAnalyseStatus(result)
+  //     //   }
+  //     //   // console.log('coze chat result:', res);
+  //     //   // 你可以 setState 或处理返回内容
+  //     // } catch (err) {
+  //     //   console.error('coze chat error:', err);
+  //     // }
+  // }
 
   const getMoodAnalyse = async() => {
     try {
@@ -58,6 +94,54 @@ export default function BookFlip() {
     }
   }
 
+  // const getAnalyseStatus = async(result) => {
+  //   const {data} = result
+  //   try {
+  //     const res = await Taro.request({
+  //       url: `https://api.coze.cn/v3/chat/retrieve?conversation_id=${data.data.conversation_id}&chat_id=${data.data.id}`,
+  //       method: 'GET',
+  //       header: {
+  //         'Authorization': auth,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+
+  //     if (res?.data?.data?.status === 'in_progress') {
+  //       // 1秒后再次请求
+  //       setTimeout(() => {
+  //         getAnalyseStatus(result);
+  //       }, 1000);
+  //     console.log('coze retrieve result1:', res);
+  //     // 你可以 setState 或处理返回内容
+  //     } else if(res?.data?.data?.status === 'completed'){
+  //       getAnalyseResult(data.data.conversation_id, data.data.id)
+  //     }else {
+  //       console.log('有其他的响应了', res)
+  //       // return res.data;
+  //     }
+  //   } catch (err) {
+  //     console.error('coze retrieve error1:', err);
+  //     return null;
+  //   }
+  // }
+
+  // const getAnalyseResult = async(conversation_id, chat_id) => {
+  //   try {
+  //     const res = await Taro.request({
+  //       url: `https://api.coze.cn/v3/chat/message/list?conversation_id=${conversation_id}&chat_id=${chat_id}`,
+  //       method: 'GET',
+  //       header: {
+  //         'Authorization': auth,
+  //         'Content-Type': 'application/json'
+  //       }
+  //     });
+
+  //     console.log('结果123', res)
+  //   } catch (err) {
+  //     console.error('coze retrieve error1:', err);
+  //     return null;
+  //   }
+  // }
 
   // 组件加载时获取情绪数据
   useEffect(() => {
@@ -155,6 +239,7 @@ export default function BookFlip() {
       <View className='book-flip'>
         {/* <Text className="book-title">{pages[pairIndex + 1]?.title || ''}</Text> */}
         {/* <Text className="book-content">{pages[pairIndex + 1]?.content || ''}</Text> */}
+        {/* 2222222 */}
         <MoodCalendarSummary 
           bookData={bookData?.[pairIndex]} 
           month={pairIndex} 

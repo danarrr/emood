@@ -1,5 +1,5 @@
 import { View, Button, Image, Input } from '@tarojs/components'
-import Taro, { getStorageSync } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import { useState } from 'react'
 import { useAppSelector } from '@/store'
 import './index.less'
@@ -19,28 +19,34 @@ const UserProfile: React.FC<UserProfileProps> = ({
   onProfileChange,
   onEditClick
 }) => {
-  const avatarFromStorage = getStorageSync('avatarUrl');
-  const nameFromStorage = getStorageSync('nickName');
-
   const userInfo = useAppSelector(state => state.user.userInfo.data);
   const vipStatus = userInfo?.isMember ? '尊贵会员' : '还未加入会员';
-  const [avatarUrl, setAvatarUrl] = useState(avatarFromStorage || defaultAvatar);
-  const [nickName, setNickName] = useState(nameFromStorage || defaultNickname);
+  const [avatarUrl, setAvatarUrl] = useState(userInfo?.avatar || defaultAvatar);
+  const [nickName, setNickName] = useState(userInfo?.nickname || defaultNickname);
 
   const onChooseAvatar = (e) => {
     const { avatarUrl } = e.detail;
     setAvatarUrl(avatarUrl);
-    // 保存到本地存储
-    Taro.setStorageSync('avatarUrl', avatarUrl);
     // 通知父组件
     onProfileChange?.({ avatarUrl, nickName });
   }
 
   const onNickNameChange = (e) => {
     const newNickName = e.detail.value;
+    if(!newNickName) return;
+    
+    // 校验特殊字符
+    const specialCharRegex = /[^\u4e00-\u9fa5a-zA-Z0-9\s]/;
+    if (specialCharRegex.test(newNickName)) {
+      Taro.showToast({
+        title: '不支持特殊字符',
+        icon: 'none',
+        duration: 2000
+      });
+      return; // 阻止保存
+    }
+    
     setNickName(newNickName);
-    // 保存到本地存储
-    Taro.setStorageSync('nickName', newNickName);
     // 通知父组件
     onProfileChange?.({ avatarUrl, nickName: newNickName });
   }
@@ -60,6 +66,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
           type='nickname'
           value={nickName}
           onInput={onNickNameChange}
+          onClick={onNickNameChange}
+          onSelectionChange={onNickNameChange}
         />
         <View className='user-profile__vip-status'>{vipStatus}</View>
       </View>

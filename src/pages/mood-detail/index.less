@@ -10,8 +10,8 @@
         text-align: center;
         image {
             margin: 0 auto;
-            width: 107px;
-            height: 105px; //这个为什么不能auto
+            width: 128px;
+            height: 130px; // @todo auto
         }
         text {
             font-size: 30px;
@@ -26,36 +26,16 @@
     }
 
     &__weekday {
-        display: inline-block;
         background: #383838;
         color: #FCAC39;
         font-size: 14px;
         font-weight: 600;
-        padding: 6px 12px;
-        border-radius: 16px;
+        padding: 3px 12px;
+        border-radius: 30px;
         margin-right: 8px;
-        text-transform: uppercase;
-        letter-spacing: 0.5px;
     }
 
-    .mood-detail__content {
-        padding: 20px;
-        box-sizing: border-box;
-        text {
-            margin-bottom: 13px;
-            font-size: 32px;
-        }
-        &-textarea {
-            border: 1px solid #7A7A7A;
-            width: 95%;
-            height: 400px;
-            padding: 8px;
-            border-radius: 20px;
-            background: #ffffff;
-            color: #000000;
-            font-size: 28px;
-        }
-    }
+
 
     // .mood-detail-button {
     //     width: 335px;
@@ -74,10 +54,10 @@
 }
 
 .mood-detail__editor {
-  margin: 12px 20px;
-  padding: 20px;
+  margin: 13px 20px;
+  padding: 13px 15px;
   background: #fff;
-  border-radius: 30px;
+  border-radius: 18px;
   border: 1px solid #CCCCCC;
 
   &-textarea {
@@ -86,32 +66,37 @@
     max-height: none;
     border: none;
     outline: none;
-    font-size: 16px;
+    font-size: 18px;
     line-height: 1.5;
+    // text-align: center;
     resize: none;
     background: transparent;
     padding-bottom: 20px;
     word-wrap: break-word;
     overflow-y: auto;
     scroll-behavior: smooth;
-    caret-color: #FCAC39;
-    
+    caret-color: #FCAC39; // 不生效
+    color: #383838;
+    font-weight: 400;
+
     &::placeholder {
+      font-weight: 400;
       color: #cccccc;
     }
     
     &:focus {
+      // caret-color: #FCAC39;
       scroll-behavior: smooth;
     }
     
     &::selection {
       background-color: rgba(252, 172, 57, 0.3);
-      color: #000;
+      color: #383838;
     }
     
     &::-moz-selection {
       background-color: rgba(252, 172, 57, 0.3);
-      color: #000;
+      color: #383838;
     }
   }
 
@@ -200,4 +185,87 @@
   font-size: 14px;
   font-weight: bold;
   z-index: 10;
+}
+
+.mood-detail__voice-btn {
+  min-width: 110px;
+  height: 32px;
+  background: #EFEEE9;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #7A7A7A;
+  font-size: 16px;
+  position: relative;
+  transition: all 0.3s ease;
+  user-select: none;
+}
+
+/* 正在聆听状态 */
+.mood-detail__voice-btn--recording {
+  background: #FCAC39;
+  color: #fff;
+  // border: 1px solid #FCAC39;
+  // box-shadow: 0 2px 8px rgba(252, 172, 57, 0.3);
+  // transform: scale(1.05);
+}
+
+/* 识别中状态 */
+.mood-detail__voice-btn--recognizing {
+  background: #cccccc;
+  color: #999;
+  // border: 1px solid #cccccc;
+  // opacity: 0.6;
+  // pointer-events: none;
+  // transform: scale(1);
+}
+.mood-detail__voice-wave {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: rgba(255,255,255,0.7);
+  box-shadow: 0 0 0 0 #fff;
+  animation: mood-detail-wave 1.2s infinite cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.mood-detail__voice-processing {
+  position: absolute;
+  left: 10px;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  background: #999;
+  animation: mood-detail-processing 1.5s infinite ease-in-out;
+}
+@keyframes mood-detail-wave {
+  0% {
+    box-shadow: 0 0 0 0 #fff;
+    opacity: 1;
+  }
+  70% {
+    box-shadow: 0 0 0 10px rgba(255,255,255,0.3);
+    opacity: 0.7;
+  }
+  100% {
+    box-shadow: 0 0 0 0 rgba(255,255,255,0);
+    opacity: 0;
+  }
+}
+
+@keyframes mood-detail-processing {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
+  50% {
+    transform: scale(1.2);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.8);
+    opacity: 0.6;
+  }
 }

@@ -1,27 +1,21 @@
 import { View, Button, Image } from '@tarojs/components'
-import Taro, { useLoad } from '@tarojs/taro'
+import Taro from '@tarojs/taro'
 import PageHeader from '@components/PageHeader';
 import UserProfile from '@components/UserProfile';
 
 import IconMember from '@imgs/pic-member@2x.png' 
 import IconSetting from '@imgs/pic-setting@2x.png'
 
+import { cloudRequest } from '@/utils/request';
+
 import './index.less'
 
 export default function UserCenter () {
-  useLoad(() => {
-    console.log('Page loaded.')
-  })
-
   const goTo = (route: string) => {
     Taro.vibrateShort({
       type: 'light'
     });
     Taro.navigateTo({ url: `/pages/${route}/index` })
-  }
-
-  const goBack = () => {
-    Taro.navigateBack()
   }
 
   const goToSetting = () => {
@@ -30,13 +24,50 @@ export default function UserCenter () {
     });
   };
 
-  const handleProfileChange = (profile) => {
-    console.log('Profile updated:', profile);
+  const handleProfileChange = async(result) => {
+    await updateUserInfo(result)
   };
 
   const handleEditClick = () => {
     console.log('Edit clicked');
   };
+
+  const updateUserInfo = async(data) => {
+    // 校验特殊字符
+    // const specialCharRegex = /[^\u4e00-\u9fa5a-zA-Z0-9\s]/;
+    // if (specialCharRegex.test(data.newNickName)) {
+    //   Taro.showToast({
+    //     title: '不支持特殊字符',
+    //     icon: 'none',
+    //     duration: 2000
+    //   });
+    //   return;
+    // }
+    
+    if(!data.nickName || !data.avatarUrl) {return false;}
+    const result = await cloudRequest({
+      path: '/account/user-info',
+      method: 'PUT',
+      data: {
+        nickname: data.nickName,
+        avatar: data.avatarUrl
+      },
+    })
+    if (result.statusCode === 200) {
+      Taro.showToast({
+        title: '保存成功',
+        icon: 'none',
+        duration: 2000
+      });
+    } else {
+      Taro.showToast({
+        title: '保存失败',
+        icon: 'none',
+        duration: 2000
+      });
+    }
+    // 返回成功。再次请求用户信息
+  }
 
   return (
     <View className='user-center'>

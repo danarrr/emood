@@ -22,8 +22,8 @@ const MEMBER_BENEFITS = {
     },
     {
       icon: IconAi,
-      title: "AI总结",
-      tip: "300个星光"
+      title: "AI功能",
+      tip: "6个月月度总结、语音自动识别功能"
     },
     {
       icon: IconImage,
@@ -41,7 +41,7 @@ const MEMBER_BENEFITS = {
     {
       icon: IconAi,
       title: "AI总结",
-      tip: "700个星光"
+      tip: "12个月月度总结、语音自动识别功能"
     },
     {
       icon: IconImage,
@@ -79,7 +79,7 @@ export default function MemberPlan () {
     // })
    
     Taro.showToast({
-      title: '正在施工中，需要添加客服：🌏danarrr',
+      title: '正在施工中，需要添加客服🌏：danarrr',
       icon: 'none', // 不显示图标
       duration: 5000 // 显示时长，单位 ms
     })
@@ -113,7 +113,7 @@ export default function MemberPlan () {
               }
             >
               <View className='member-plan__card-title'>{index === 0 ? '半年会员' : '年度会员'}</View>
-              <View className='member-plan__card-price'>{index === 0 ? '￥59.9/半年' : '￥99.9/年'}</View>
+              <View className='member-plan__card-price'>{index === 0 ? '￥39.9/半年' : '￥59.9/年'}</View>
             </View>
           </SwiperItem>
         ))}
@@ -132,7 +132,7 @@ export default function MemberPlan () {
       </View>
       <View className='member-plan__guide-title'>商品支付指南</View>
       <View className='member-plan__guide'>
-        微信支付功能未上线，如有诉求请添加客服🌏danarrr即可开通。
+        微信支付功能未上线，如有诉求请添加客服🌏：danarrr 即可开通。
       </View>
       <Button className='member-plan__pay-btn' onClick={handlePayClick}>立即支付</Button>
     </View>

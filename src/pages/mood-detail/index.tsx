@@ -1,6 +1,6 @@
 import { View, Image, Textarea, Text } from '@tarojs/components'
 import Taro, { useRouter } from '@tarojs/taro'
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useAppSelector, useAppDispatch } from '@/store'
 import { getMoodDetailListAction, getMoodListAction } from '@/store/moods/actions'
 
@@ -17,13 +17,61 @@ import IconPublish from '@imgs/icon-publish@2x.png'
 
 import './index.less'
 
+// @ts-ignore
+const plugin = requirePlugin('WechatSI');
+
+
 
 export default function MoodDetail () {
+  const manager = plugin.getRecordRecognitionManager();
   const dispatch = useAppDispatch();
   const moodlist = useAppSelector((state) => state.mood.moodList);
   const userInfo = useAppSelector((state) => state.user.userInfo);
   const router = useRouter();
   const { id, mood, date } = router.params as { id?: string, mood?: string, date?: string };
+
+
+// useEffect(() => {
+  
+//   return () => {
+//     manager.onStart = null;
+//     manager.onStop = null;
+//     manager.onError = null;
+//   };
+// }, []);
+
+  const [voiceStatus, setVoiceStatus] = useState<'idle' | 'listening' | 'recognizing'>('idle');
+  const recordBtnRef = useRef(null);
+
+  function startRecord() {
+    setVoiceStatus('listening');
+    manager.start({ duration: 30000, lang: 'zh_CN' });
+  }
+
+  function stopRecord() {
+    manager.stop();
+  }
+
+  manager.onStart = function(res) {
+    setVoiceStatus('listening');
+  };
+  
+  manager.onStop = function(res) {
+    // 识别结果写入Textarea
+    if (res.result) {
+      setDetailInfo(prev => ({ ...prev, content: prev.content + res.result }));
+    }
+    setVoiceStatus('idle');
+  };
+
+  manager.onError = function(res) {
+    console.log('语音识别失败', res);
+    if(res.retcode === -30011) {
+      setVoiceStatus('recognizing');
+    } else {
+      setVoiceStatus('idle');
+    }
+  };
 
   // 统一 detailInfo 管理所有数据
   const [detailInfo, setDetailInfo] = useState<{
@@ -186,7 +234,7 @@ export default function MoodDetail () {
     if (!dateInfo?.month || !dateInfo?.date) return null;
     const date = new Date(Number(dateInfo.year), Number(dateInfo.month) - 1, Number(dateInfo.date));
     const dayOfWeek = date.getDay();
-    const weekDays = ['Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const weekDays = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
     const weekDay = weekDays[dayOfWeek];
     return { weekDay, dateText: `${dateInfo.month}月${dateInfo.date}日` };
   };
@@ -257,7 +305,32 @@ export default function MoodDetail () {
               src={IconCamera}
               onClick={handleChooseImage}
             />
+            <View
+              className={`mood-detail__voice-btn${
+                voiceStatus === 'listening' ? ' mood-detail__voice-btn--recording' : 
+                voiceStatus === 'recognizing' ? ' mood-detail__voice-btn--recognizing' : ''
+              }`}
+              ref={recordBtnRef}
+              onTouchStart={startRecord}
+              onTouchEnd={stopRecord}
+              onTouchCancel={stopRecord}
+            >
+              {voiceStatus === 'listening' ? (
+                <>
+                  <View className='mood-detail__voice-wave'></View>
+                  <Text>正在聆听</Text>
+                </>
+              ) : voiceStatus === 'recognizing' ? (
+                <>
+                  <View className='mood-detail__voice-processing'></View>
+                  <Text>正在解析</Text>
+                </>
+              ) : (
+                <Text>你说我写</Text>
+              )}
+            </View>
           </View>
+          
           <View className='mood-detail__editor-save-status'>
             {uploading ? '上传中...' : saving ? '正在保存中...' : ''}
           </View>
