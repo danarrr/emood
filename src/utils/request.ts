@@ -1,7 +1,6 @@
 import Taro from '@tarojs/taro'
 import { refreshLogin, loginAndStore } from '@utils/login'
 
-const NOLOGIN = 40002
 
 // 云开发请求封装
 export async function cloudRequest(options) {
@@ -18,7 +17,7 @@ export async function cloudRequest(options) {
   const res = await Taro.cloud.callContainer(callOptions);
 
   // 判断JWT过期 (code: -1, message: "jwt expired")
-  if ((res.data?.code === -1 && res.data?.message === "jwt expired") || res.data.code === NOLOGIN) {
+  if (res.data?.status === 401) {
     const success = await loginAndStore();
     if (success) {
       token = Taro.getStorageSync('authorization')?.token;

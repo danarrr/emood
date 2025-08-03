@@ -19,7 +19,16 @@ export default function PageHeader({ title }: PageHeaderProps) {
   }, []);
 
   const goBack = () => {
-    Taro.navigateBack()
+    // 获取当前页面栈
+    const pages = Taro.getCurrentPages();
+    
+    // 如果页面栈长度大于1，说明有上一页，可以返回
+    if (pages.length > 1) {
+      Taro.navigateBack();
+    } else {
+      // 如果没有上一页，跳转到首页
+      Taro.redirectTo({ url: '/pages/mood/index' });
+    }
   }
 
   return (

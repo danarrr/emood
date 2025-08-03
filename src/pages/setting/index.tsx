@@ -57,7 +57,7 @@ export default function Setting() {
       onChange: async(e) => {
         const value = getSkinRange(hasSkinList, skinOptions)[e.detail.value];
         setSelectedSkin(value);
-        await updateUserInfo({ currentSkin: Object.keys(skinOptions)[e.detail.value] });
+        await updateUserInfo({ currentSkin: Object.keys(skinOptions)[e.detail.value] }); // 更新用户信息
         await getUserInfo()
       }
     },
@@ -88,7 +88,6 @@ export default function Setting() {
 
 
   const getHasSkinList = async() =>{
-    console.log('没有进来就请求吗')
     if (!userInfo.userid) return;
     const { data } = await cloudRequest({
       path: '/skin/list', // 业务自定义路径和参数

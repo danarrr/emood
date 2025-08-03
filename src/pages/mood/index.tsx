@@ -51,12 +51,15 @@ export default function MoodRecord () {
   const getMoodList = async (data: { year: number }) => {
     dispatch(getMoodListAction({ data }))
   }
-  
+
   // 组件加载时获取情绪数据
   useEffect(() => {
     // if (moodList.status === DataStatus.INITIAL) {
-      getUserInfo();
-      getMoodList({ year: +currentMonthInfo.year }); // 不用传userID, jwt直接验签？ @bapeLin
+    const fetchData = async () => {
+      await getUserInfo();
+      await getMoodList({ year: +currentMonthInfo.year }); // 不用传userID, jwt直接验签？ @bapeLin
+    };
+    fetchData();
     // }
   }, []);
 
@@ -66,7 +69,7 @@ export default function MoodRecord () {
   }, [!!userInfo?.data?.birthdayMonth])
 
   // 路由跳转
-  const goTo = (route: string, data?: any) => {
+  const goTo = (route: string, data?: any, routerType: 'navigateTo' | 'redirectTo' = 'navigateTo') => {
     Taro.vibrateShort({ type: 'light' });
     const url = data 
       ? `${route}?${Object.entries(data)
@@ -79,7 +82,7 @@ export default function MoodRecord () {
           })
           .join('&')}`
       : route;
-    Taro.navigateTo({ url });
+    Taro[`${routerType}`]({ url });
   }
 
   // 调用 Turntable 子组件方法
@@ -189,7 +192,7 @@ export default function MoodRecord () {
         </View>
         <View
           className='mood-tabbar__item'
-          onClick={() => goTo('/subpackages/packageMbook/mood-book/index')}
+          onClick={() => goTo('/subpackages/packageMbook/mood-book/index', {}, 'redirectTo')}
         >
           <Image className='mood-tabbar__icon' src={book} />
         </View>
