@@ -54,13 +54,19 @@ export default function MoodRecord () {
 
   // 组件加载时获取情绪数据
   useEffect(() => {
-    // if (moodList.status === DataStatus.INITIAL) {
+    // 检查数据是否已经加载，如果没有才请求
     const fetchData = async () => {
-      await getUserInfo();
-      await getMoodList({ year: +currentMonthInfo.year }); // 不用传userID, jwt直接验签？ @bapeLin
+      // 检查用户信息是否已加载
+      if (!userInfo?.data) {
+        await getUserInfo();
+      }
+      
+      // 检查心情列表是否已加载
+      if (!moodList?.data) {
+        await getMoodList({ year: +currentMonthInfo.year });
+      }
     };
     fetchData();
-    // }
   }, []);
 
 
@@ -125,8 +131,12 @@ export default function MoodRecord () {
   }
 
   // 选择日期后显示蒙层
-  const handleSetShowMaskDate = (date: MonthInfo) => {
-    setShowMaskDate(date)
+  const handleSetShowMaskDate = (date: { year: number; month: number; date: number }) => {
+    setShowMaskDate({
+      month: date.month.toString(),
+      year: date.year.toString(),
+      date: date.date.toString()
+    })
     handleOpenSltMoodMask()
   }
 

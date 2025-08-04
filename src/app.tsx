@@ -46,10 +46,10 @@ function App({ children }: PropsWithChildren<any>) {
         console.log('登录信息无效或过期，正在重新登录...')
         const success = await loginAndStore()
         if (success) {
-          // 登录成功后重新跳转大
-          Taro.reLaunch({
-            url: '/pages/mood/index'
-          });
+          // // 登录成功后重新跳转大
+          // Taro.reLaunch({
+          //   url: '/pages/mood/index'
+          // });
           console.log('登录成功，信息已存储')
         } else {
           console.error('登录失败')
