@@ -95,7 +95,6 @@ export default function BookFlip() {
         path: `/analyse/year?year=${year}`,
         method: 'GET'
       });
-      
       if (result.statusCode === 200 && result.data?.analyses) {
         // 将月度分析数据按月份存储
         const analysesMap: {[key: string]: any} = {};

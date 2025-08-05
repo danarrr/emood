@@ -66,7 +66,7 @@ const MoodCalendarSummary = ({ bookData = {}, year, month, monthAnalyses = {} }:
         <View className="ai-summary">
           <View className="ai-summary-title">上帝视角</View>
           <View className="ai-summary-content">
-            {monthAnalyses?.content || '正在分析中...'}
+            {monthAnalyses?.content || monthAnalyses?.message || '暂无数据'}
           </View>
         </View>
       )}
