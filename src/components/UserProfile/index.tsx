@@ -33,6 +33,11 @@ const UserProfile: React.FC<UserProfileProps> = ({
 
   const onNickNameChange = (e) => {
     const newNickName = e.detail.value;
+    setNickName(newNickName);
+  }
+
+  const onNickNameBlur = (e) => {
+    const newNickName = e.detail.value;
     if(!newNickName) return;
     
     // 校验特殊字符
@@ -43,11 +48,12 @@ const UserProfile: React.FC<UserProfileProps> = ({
         icon: 'none',
         duration: 2000
       });
+      // 恢复原来的昵称
+      setNickName(userInfo?.nickname || defaultNickname);
       return; // 阻止保存
     }
     
-    setNickName(newNickName);
-    // 通知父组件
+    // 通知父组件（只在失焦时触发接口请求）
     onProfileChange?.({ avatarUrl, nickName: newNickName });
   }
 
@@ -65,8 +71,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
           className='user-profile__nickname' 
           type='nickname'
           value={nickName}
-          onFocus={onNickNameChange}
           onSelectionChange={onNickNameChange}
+          onBlur={onNickNameBlur}
         />
         <View className='user-profile__vip-status'>{vipStatus}</View>
       </View>

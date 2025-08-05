@@ -273,7 +273,6 @@ export default function MoodDetail () {
           onInput={handleContentChange}
           maxlength={-1}
           autoHeight
-          // showConfirmBar={false}
           cursorSpacing={50}
           adjustPosition={true}
           // holdKeyboard={true}
@@ -300,11 +299,12 @@ export default function MoodDetail () {
         )}
         <View className='mood-detail__editor-footer'>
           <View className='mood-detail__editor-actions'>
-            <Image
+            {userInfo?.isMember && <Image
               className='mood-detail__editor-action-icon'
               src={IconCamera}
               onClick={handleChooseImage}
             />
+            }
             <View
               className={`mood-detail__voice-btn${
                 voiceStatus === 'listening' ? ' mood-detail__voice-btn--recording' : 

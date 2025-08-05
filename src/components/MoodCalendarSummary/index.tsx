@@ -1,4 +1,5 @@
 import { View, Text, Image } from '@tarojs/components';
+import { useAppSelector } from '@/store';
 import { getSkinType, getEmojiMap } from '@/utils/emojiMaps'
 import './index.less';
 
@@ -7,6 +8,8 @@ function getDaysInMonth(year: number, month: number) {
 }
 
 const MoodCalendarSummary = ({ bookData = {}, year, month, monthAnalyses = {} }: { year: number, month: number, bookData: any, monthAnalyses?: {[key: string]: any} }) => {
+  const userInfo = useAppSelector((state) => state.user.userInfo.data);
+  const isMember = userInfo?.isMember;
   const daysInMonth = getDaysInMonth(year, month);
   // 计算每周的天数
   const weeks: number[][] = [];
@@ -58,13 +61,15 @@ const MoodCalendarSummary = ({ bookData = {}, year, month, monthAnalyses = {} }:
         ))}
       </View>
 
-      {/* AI Summary */}
-      <View className="ai-summary">
-        <View className="ai-summary-title">上帝视角</View>
-        <View className="ai-summary-content">
-          {monthAnalyses?.content || '正在分析中...'}
+      {/* AI Summary - 仅会员可见 */}
+      {isMember && (
+        <View className="ai-summary">
+          <View className="ai-summary-title">上帝视角</View>
+          <View className="ai-summary-content">
+            {monthAnalyses?.content || '正在分析中...'}
+          </View>
         </View>
-      </View>
+      )}
     </View>
   );
 };
