@@ -4,10 +4,13 @@ import Taro, { useRouter } from '@tarojs/taro';
 import { useAppDispatch, useAppSelector } from '@/store';
 import { DataStatus } from '@/store/interface';
 import { getMoodDetailListAction, getMoodListAction } from '@/store/moods/actions'
+
+import PageHeader from '@components/PageHeader';
+
 import { cloudRequest } from '@/utils/request';
 import { getEmojiMap, getSkinType } from '@/utils/emojiMaps';
 
-import PageHeader from '@components/PageHeader';
+
 
 import IconMore from '@imgs/icon-more.png';
 
@@ -37,10 +40,7 @@ export default function MoodList() {
   const { year, month, day } = router.params;
 
   const [moodRecords, setMoodRecords] = useState<MoodRecordItem[]>([]);
-  const [error, setError] = useState<string | null>(null);
   const [scrollTargetId, setScrollTargetId] = useState<string | undefined>(undefined);
-
-  
 
   const getEmojiConfigMap = (emojiName: string = '') => {
     const skinType = getSkinType(emojiName);
@@ -50,9 +50,7 @@ export default function MoodList() {
 
   // 仅首次生效
   useEffect(() => {
-    if (moodRecords.length === 0 && moodDetailList.status === DataStatus.INITIAL) {
       getMoodList(year, month);
-    }
   }, [year, month]);
 
   const getMoodList = async (year: number, month?: number) => {
@@ -65,7 +63,6 @@ export default function MoodList() {
   }, [moodDetailList.data, month]);
 
   useEffect(() => {
-
     if (day && moodRecords.length > 0) {
       const monthStr = String(month).padStart(2, '0');
       const dayStr = String(day).padStart(2, '0');
@@ -146,10 +143,10 @@ export default function MoodList() {
     <View className='mood-list-page'>
       <PageHeader title='心情列表' />
       {moodDetailList.status === DataStatus.PENDING && <Text className='loading-text'>加载中...</Text>}
-      {moodDetailList.status !== DataStatus.PENDING && moodRecords.length === 0 && !error && (
+      {moodDetailList.status !== DataStatus.PENDING && moodRecords.length === 0 && (
         <Text className='no-data-text'>暂无心情记录</Text>
       )}
-      <ScrollView
+      {moodRecords.length > 0 && <ScrollView
         scrollY
         className='mood-list-scroll'
         scrollIntoView={scrollTargetId}
@@ -188,7 +185,7 @@ export default function MoodList() {
             </View>
           )
         })}
-      </ScrollView>
+      </ScrollView>}
     </View>
   );
 } 
