@@ -1,6 +1,6 @@
 // 表情图片全局常量
-export const domin = 'https://prod-6glre6n1cad02d9f-1363336642.tcloudbaseapp.com';
-export const sign = 'sign=9cc7b625eb436649b8a821c039d404a9&t=1750909934'; 
+export const domin = 'https://prod-3gatvr0ib643fef5-1372924288.tcloudbaseapp.com';
+export const sign = 'sign=2aa65b1d25a76a03c09de47dbe574ade&t=1754471589'; 
 
 
 const skinOptions = {

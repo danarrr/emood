@@ -34,7 +34,7 @@ function App({ children }: PropsWithChildren<any>) {
     
     // 初始化云开发
     Taro.cloud.init({
-      env: 'prod-6glre6n1cad02d9f',
+      env: 'prod-3gatvr0ib643fef5',
       traceUser: true,
     })
 
@@ -65,7 +65,7 @@ function App({ children }: PropsWithChildren<any>) {
     Taro.loadFontFace({
       family: 'AlibabaPuHuiTiBold',
       global: true,
-      source: 'https://prod-6glre6n1cad02d9f-1363336642.tcloudbaseapp.com/AlibabaPuHuiTi-2-75-SemiBold.ttf?sign=dfa5e8ffa02389bf8706b84336bbf137&t=1751296279',  //此处需替换为真实字体地址
+      source: 'https://prod-3gatvr0ib643fef5-1372924288.tcloudbaseapp.com/AlibabaPuHuiTi-2-75-SemiBold.ttf?sign=a5632d598a32265b447cd3e906f9d007&t=1754471453',  //此处需替换为真实字体地址
       success(res) {
         console.log(res.status)
       },
@@ -80,7 +80,7 @@ function App({ children }: PropsWithChildren<any>) {
     Taro.loadFontFace({
       family: 'AlibabaPuHuiTi',
       global: true,
-      source: 'https://prod-6glre6n1cad02d9f-1363336642.tcloudbaseapp.com/AlibabaPuHuiTi-3-45-Light.ttf?sign=833194c25e80451833b1b2667bef5684&t=1751296309',  //此处需替换为真实字体地址
+      source: 'https://prod-3gatvr0ib643fef5-1372924288.tcloudbaseapp.com/AlibabaPuHuiTi-3-45-Light.ttf?sign=8b89946cd0ffb6ae56eb02d562b1a7ec&t=1754471473',  //此处需替换为真实字体地址
       success(res) {
         console.log(res.status)
       },

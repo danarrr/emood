@@ -79,7 +79,7 @@ export default function MemberPlan () {
     // })
    
     Taro.showToast({
-      title: '正在施工中，需要添加客服🌏：danarrr',
+      title: '正在施工中，需要添加客服🌏：13417008504',
       icon: 'none', // 不显示图标
       duration: 5000 // 显示时长，单位 ms
     })
@@ -132,7 +132,7 @@ export default function MemberPlan () {
       </View>
       <View className='member-plan__guide-title'>商品支付指南</View>
       <View className='member-plan__guide'>
-        微信支付功能未上线，如有诉求请添加客服🌏：danarrr 即可开通。
+        微信支付功能未上线，如有诉求请添加客服🌏：13417008504 即可开通。
       </View>
       <Button className='member-plan__pay-btn' onClick={handlePayClick}>立即支付</Button>
     </View>

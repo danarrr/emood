@@ -78,7 +78,7 @@ export default function EmojiList () {
     //   }
     // })
     Taro.showToast({
-      title: '正在施工中，需要添加客服🌏：danarrr',
+      title: '正在施工中，需要添加客服🌏：13417008504',
       icon: 'none', // 不显示图标
       duration: 5000 // 显示时长，单位 ms
     })
