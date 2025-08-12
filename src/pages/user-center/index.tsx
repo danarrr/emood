@@ -26,7 +26,7 @@ export default function UserCenter () {
     try {
       setLoading(true)
       const result = await cloudRequest({
-        path: '/global-config/all',
+        path: '/global-config/setting',
         method: 'GET'
       })
       
@@ -44,9 +44,8 @@ export default function UserCenter () {
 
   // 判断模块是否展示
   const shouldShowModule = (moduleKey: string) => {
-    console.log('configData', configData)
     if (!configData) return true // 如果配置未加载，默认展示
-    return configData[moduleKey] // 根据配置决定是否展示
+    return configData?.[moduleKey] // 根据配置决定是否展示
   }
 
   const goTo = (route: string) => {
@@ -128,7 +127,7 @@ export default function UserCenter () {
         onProfileChange={handleProfileChange}
         onEditClick={handleEditClick}
       />
-      {shouldShowModule('show_skin_market') && (
+      {shouldShowModule('show_payment_module') && (
       <>
       {/* 皮肤集市卡片 */}
         <View className='user-center__market'>
