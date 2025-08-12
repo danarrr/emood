@@ -126,6 +126,7 @@ export default function UserCenter () {
       <UserProfile 
         onProfileChange={handleProfileChange}
         onEditClick={handleEditClick}
+        showVipStatus={shouldShowModule('show_payment_module')}
       />
       {shouldShowModule('show_payment_module') && (
       <>
