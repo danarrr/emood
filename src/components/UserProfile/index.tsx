@@ -24,11 +24,36 @@ const UserProfile: React.FC<UserProfileProps> = ({
   const [avatarUrl, setAvatarUrl] = useState(userInfo?.avatar || defaultAvatar);
   const [nickName, setNickName] = useState(userInfo?.nickname || defaultNickname);
 
-  const onChooseAvatar = (e) => {
+  const onChooseAvatar = async (e) => {
     const { avatarUrl } = e.detail;
-    setAvatarUrl(avatarUrl);
-    // 通知父组件
-    onProfileChange?.({ avatarUrl, nickName });
+    
+    // 显示上传中提示
+    Taro.showLoading({ title: '上传中...' });
+
+    try {
+      // 上传头像到云存储
+      const uploadResult = await new Promise<string>((resolve, reject) => {
+        Taro.cloud.uploadFile({
+          cloudPath: `avatars/${userInfo?.userid}.jpg`,
+          filePath: avatarUrl,
+          success: res => resolve(res.fileID),
+          fail: err => reject(err)
+        });
+      });
+      
+      // 更新本地状态
+      setAvatarUrl(uploadResult);
+      
+      // 通知父组件，传递永久链接
+      onProfileChange?.({ avatarUrl: uploadResult, nickName });
+      
+      Taro.hideLoading();
+      Taro.showToast({ title: '头像上传成功', icon: 'success' });
+    } catch (error) {
+      Taro.hideLoading();
+      Taro.showToast({ title: '头像上传失败', icon: 'none' });
+      console.error('头像上传失败:', error);
+    }
   }
 
   const onNickNameChange = (e) => {
