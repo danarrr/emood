@@ -1,6 +1,6 @@
 import { View, Button, Image, Input } from '@tarojs/components'
 import Taro from '@tarojs/taro'
-import { useState } from 'react'
+import { useState, useCallback, useRef } from 'react'
 import { useAppSelector } from '@/store'
 import './index.less'
 
@@ -56,31 +56,24 @@ const UserProfile: React.FC<UserProfileProps> = ({
     }
   }
 
-  const onNickNameChange = (e) => {
-    const newNickName = e.detail.value;
-    setNickName(newNickName);
-  }
+  // 节流：记录上次触发时间
+  const lastInvokeRef = useRef<number>(0);
 
-  const onNickNameBlur = (e) => {
-    const newNickName = e.detail.value;
-    if(!newNickName) return;
-    
-    // 校验特殊字符
-    const specialCharRegex = /[^\u4e00-\u9fa5a-zA-Z0-9\s]/;
-    if (specialCharRegex.test(newNickName)) {
-      Taro.showToast({
-        title: '不支持特殊字符',
-        icon: 'none',
-        duration: 2000
-      });
-      // 恢复原来的昵称
-      setNickName(userInfo?.nickname || defaultNickname);
-      return; // 阻止保存
+  const onNickNameChange = useCallback((e) => {
+    let newNickName = e.detail.value;
+    const now = Date.now();
+    if (now - lastInvokeRef.current >= 500) {
+      lastInvokeRef.current = now;
+      // 删除 emoji 表情符号
+      const emojiRegex = /[\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F018}-\u{1F270}]|[\u{238C}-\u{2454}]|[\u{20D0}-\u{20FF}]|[\u{FE00}-\u{FE0F}]|[\u{1FAB0}-\u{1FABF}]|[\u{1F600}-\u{1F6FF}]|[\u{1F900}-\u{1F9FF}]|[\u{1F018}-\u{1F270}]|[\u{238C}-\u{2454}]|[\u{20D0}-\u{20FF}]|[\u{FE00}-\u{FE0F}]|[\u{1FAB0}-\u{1FABF}]/gu;
+      newNickName = newNickName.replace(emojiRegex, '');
+
+      setNickName(newNickName);
+      // 通知父组件，使用清理后的昵称
+      onProfileChange?.({ avatarUrl, nickName: newNickName });
     }
-    
-    // 通知父组件（只在失焦时触发接口请求）
-    onProfileChange?.({ avatarUrl, nickName: newNickName });
-  }
+  }, []);
+
 
   return (
     <View className='user-profile'>
@@ -96,10 +89,10 @@ const UserProfile: React.FC<UserProfileProps> = ({
           className='user-profile__nickname' 
           type='nickname'
           value={nickName}
-          onSelectionChange={onNickNameChange}
-          onBlur={onNickNameBlur}
+          onInput={onNickNameChange}
+          // onBlur={onNickNameBlur}
         />
-        <View className='user-profile__vip-status'>{vipStatus}</View>
+        <View className='user-profile__vip-status'>{vipStatus} {userInfo?.userid}</View>
       </View>
       {/* <Image 
         className='user-profile__edit' 

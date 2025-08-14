@@ -300,6 +300,7 @@ export default function MoodDetail () {
         <View className='mood-detail__editor-footer'>
           <View className='mood-detail__editor-actions'>
             {userInfo?.isMember && <Image
+            // {userInfo?.data?.isMember && <Image
               className='mood-detail__editor-action-icon'
               src={IconCamera}
               onClick={handleChooseImage}

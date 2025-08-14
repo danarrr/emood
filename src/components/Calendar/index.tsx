@@ -48,7 +48,7 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handle
       // 自动隐藏滑动提示（6秒后）
       const timer = setTimeout(() => {
         setShowSlideHint(false);
-      }, 6000);
+      }, 4000);
 
       return () => clearTimeout(timer);
     }

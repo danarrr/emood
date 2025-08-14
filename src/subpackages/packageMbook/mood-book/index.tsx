@@ -92,7 +92,7 @@ export default function BookFlip() {
         // 自动隐藏滑动提示（8秒后）
         const timer = setTimeout(() => {
           setShowSlideHint(false);
-        }, 8000);
+        }, 4000);
 
         return () => clearTimeout(timer);
       }
