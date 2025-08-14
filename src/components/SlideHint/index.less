@@ -1,0 +1,40 @@
+// 滑动提示动画 - 色块重复往左滑
+.slide-hint {
+  position: absolute; // 改为 absolute 定位，相对于父容器
+  top: 50%;
+  transform: translateY(-50%);
+  width: 200px; // 增加轨道长度
+  height: 60px;
+  pointer-events: none;
+  z-index: 9999;
+
+  &--left {
+    left: -30px;
+  }
+
+  &--right {
+    right: -30px;
+  }
+
+  &__slider {
+    width: 20px;
+    height: 20px;
+    background: rgba(128, 128, 128, 0.6); // 灰色半透明
+    border: 1px solid #000; // 黑色细边框
+    border-radius: 50%; // 圆形
+    position: relative;
+    animation: slideBlock 2s ease-in-out infinite;
+  }
+}
+
+// 色块滑动动画 - 从右到左，透明度渐变
+@keyframes slideBlock {
+  0% {
+    transform: translateX(100px);
+    opacity: 1;
+  }
+  100% {
+    transform: translateX(-100px);
+    opacity: 0;
+  }
+} 

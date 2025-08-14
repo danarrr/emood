@@ -7,6 +7,7 @@ import { MoodListMonthData } from '@/store/moods';
 
 import MoodCalendarSummary from '@components/MoodCalendarSummary';
 import PageHeader from '@components/PageHeader';
+import SlideHint from '@components/SlideHint';
 import { cloudRequest } from '@/utils/request';
 
 import './index.less';
@@ -24,6 +25,7 @@ export default function BookFlip() {
   const [bookData, setBookData] = useState<MoodListMonthData | null>(null);
   const [flipDirection, setFlipDirection] = useState<'left' | 'right' | null>(null);
   const [yearAnalyses, setYearAnalyses] = useState<{[key: string]: any}>({});
+  const [showSlideHint, setShowSlideHint] = useState(false);
   const touchStartX = useRef(0);
 
   const moodlist = useAppSelector((state) => state.mood.moodList);
@@ -79,6 +81,21 @@ export default function BookFlip() {
     const cachedPageIndex = getPageFromCache();
     setPairIndex(cachedPageIndex);
     console.log('从缓存恢复页面位置:', cachedPageIndex);
+    
+    // 检查是否需要显示滑动提示动画
+      const moodBookLastPage = Taro.getStorageSync(CACHE_KEY);
+      const shouldShowHint = !moodBookLastPage || moodBookLastPage === 0;
+      
+      if (shouldShowHint) {
+        // 首次进入，显示滑动提示
+        setShowSlideHint(true);
+        // 自动隐藏滑动提示（8秒后）
+        const timer = setTimeout(() => {
+          setShowSlideHint(false);
+        }, 8000);
+
+        return () => clearTimeout(timer);
+      }
   }, []);
 
   useEffect(() => {
@@ -126,6 +143,7 @@ export default function BookFlip() {
     if (isFlipping) return;
     touchStartX.current = e.touches[0].clientX;
     setFlipPercent(0);
+    setShowSlideHint(false); // 隐藏滑动提示
   };
 
   // 触摸移动
@@ -301,11 +319,16 @@ export default function BookFlip() {
       </View> */}
       <View
         className="book-outer"
-        catchMove={false}
+        catchMove={true}
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
       >
+        {/* 滑动效果 */}
+        <SlideHint 
+          show={showSlideHint} 
+          position="right"
+        />
         {/* 左侧静态页（翻右时出现） */}
         {getStaticLeftContent()}
         {/* 右侧静态页（翻左时出现） */}

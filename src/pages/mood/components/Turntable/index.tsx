@@ -5,7 +5,6 @@ import { useAppSelector } from '@/store';
 
 import { getEmojiMap } from '@/utils/emojiMaps';
 
-
 import './index.less';
 
 interface TurntableProps {
@@ -26,17 +25,33 @@ interface EmojiItem {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [offset, setOffset] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
+  const [isInitializing, setIsInitializing] = useState(true);
 
   const [currentEmojiMap, setCurrentEmojiMap] = useState<EmojiItem[]>([])
 
 
   useEffect(() => {
     const currentSkin = userInfo.data?.currentSkin
-    const emojiMap = getEmojiMap(currentSkin, 'arr')
-    if (emojiMap) {
+    const emojiMap = getEmojiMap(currentSkin, 'arr') as EmojiItem[]
+    if (emojiMap && emojiMap.length > 0) {
       setCurrentEmojiMap(emojiMap);
+      
+      // 触发初始化动画
+      if (!isInitialized) {
+        setIsInitialized(true);
+        // 延迟一点时间让组件完全渲染后再开始动画
+   
+          // 开始散开动画
+          setTimeout(() => {
+            setIsInitializing(false); // 开始散开到目标位置
+            setTimeout(() => {
+              setOffset(-(360 / emojiMap.length));  // 然后执行滚动动画
+            }, 300); // 等待散开动画完成
+          }, 100);
+        }
     }
-  }, [userInfo.status === 'success'])
+  }, [userInfo.status === 'success', isInitialized])
 
   useImperativeHandle(ref, () => ({
     handleTouchStart: (e: any) => {
@@ -77,7 +92,16 @@ interface EmojiItem {
 
   // 计算表情位置
   const getEmojiPosition = (index: number) => {
-    const baseAngle = (index * 360) / currentEmojiMap.length;
+    let baseAngle;
+    if (currentEmojiMap.length % 2 === 1) {
+      // 单数时，调整起始角度让分布更匀称
+      // 通过偏移半个角度间隔，让emoji在视觉上更平衡
+      baseAngle = (index * 360) / currentEmojiMap.length + (180 / currentEmojiMap.length);
+    } else {
+      // 双数时保持原来的计算方式
+      baseAngle = (index * 360) / currentEmojiMap.length;
+    }
+    
     const currentAngle = baseAngle + offset;
     const radius = 100;
     const x = Math.cos((currentAngle * Math.PI) / 180) * radius;
@@ -98,11 +122,11 @@ interface EmojiItem {
         const { x, y } = getEmojiPosition(index);
         return (
           <View 
-            className="icon" 
+            className={`icon${isInitializing ? ' icon--initializing' : ''}`}
             key={index} 
             style={{ 
-              transform: `translate(${x}px, ${y}px)`,
-              transition: 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)' // 使用更平滑的贝塞尔曲线
+              transform: isInitializing ? 'translate(0, 0)' : `translate(${x}px, ${y}px)`,
+              transition: isInitializing ? 'transform 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94)' : 'transform 0.3s cubic-bezier(0.4, 0, 0.2, 1)'
             }}
             onClick={() => handleSelect(emoji.key)}
           >

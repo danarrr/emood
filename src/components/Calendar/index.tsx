@@ -1,10 +1,11 @@
 import Taro from '@tarojs/taro';
 import { View, Image } from '@tarojs/components';
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { MoodListData } from '@/store/moods';
 
 import { getEmojiMap, getSkinType } from '@/utils/emojiMaps';
 import { isFuture } from '@/utils/date';
+import SlideHint from '@components/SlideHint';
 
 import './index.less'; 
 
@@ -21,6 +22,8 @@ interface CalendarProps {
 }
 
 const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handleSltMood }) => {
+  const [showSlideHint, setShowSlideHint] = useState(false);
+
   // 获取当月天数
   const getDaysInMonth = (year: number, month: number): number => {
     return new Date(year, month, 0).getDate();
@@ -34,8 +37,26 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handle
   const numberOfDays = getDaysInMonth(year, month);
   const firstDayOfWeek = getFirstDayOfWeek(year, month);
 
+  // 检查是否需要显示滑动提示动画
+  useEffect(() => {
+    const moodBookLastPage = Taro.getStorageSync('mood_book_last_page');
+    const shouldShowHint = !moodBookLastPage || moodBookLastPage === 0;
+    
+    if (shouldShowHint) {
+      // 首次进入，显示滑动提示
+      setShowSlideHint(true);
+      // 自动隐藏滑动提示（6秒后）
+      const timer = setTimeout(() => {
+        setShowSlideHint(false);
+      }, 6000);
+
+      return () => clearTimeout(timer);
+    }
+  }, []);
+
   // 跳转到日记列表页
   const goToMoodList = (hasRecord, dayNumber) => {
+    setShowSlideHint(false); // 隐藏滑动提示
     if (hasRecord) {
       Taro.navigateTo({ url: `/pages/mood-list/index?day=${dayNumber}&month=${month}&year=${year}` });
     }
@@ -43,6 +64,11 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handle
   
   return (
     <View className='mood-calendar'>
+      {/* 滑动提示 */}
+      <SlideHint 
+        show={showSlideHint} 
+        position="right"
+      />
         {weekdays.map((day, index) => (
           <View key={index} className='mood-calendar__weekday'>
             {day}
@@ -74,8 +100,11 @@ const Calendar: React.FC<CalendarProps> = ({ year, month, emojiData = {}, handle
               className={`mood-calendar__day${isFutureDate ? ' mood-calendar__day--future' : ''}`} 
               onClick={
                 isFutureDate ? undefined : (
-                  () => emojiSrc ? goToMoodList(emojiSrc, dayNumber) 
-                   : handleSltMood({ year, month, date:dayNumber})
+                  () => {
+                    setShowSlideHint(false); // 隐藏滑动提示
+                    emojiSrc ? goToMoodList(emojiSrc, dayNumber) 
+                     : handleSltMood({ year, month, date:dayNumber})
+                  }
                 )
               }
             >
