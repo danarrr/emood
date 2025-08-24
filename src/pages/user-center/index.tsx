@@ -13,7 +13,7 @@ import './index.less'
 
 export default function UserCenter () {
   // 添加状态管理
-  const [configData, setConfigData] = useState(null)
+  const [configData, setConfigData] = useState(false)
   const [loading, setLoading] = useState(true)
 
   // 页面加载时调用全局配置接口
@@ -44,7 +44,7 @@ export default function UserCenter () {
 
   // 判断模块是否展示
   const shouldShowModule = (moduleKey: string) => {
-    if (!configData) return true // 如果配置未加载，默认展示
+    if (!configData) return false // 如果配置未加载，默认展示
     return configData?.[moduleKey] // 根据配置决定是否展示
   }
 
@@ -140,11 +140,11 @@ export default function UserCenter () {
         </View>
         {/* 功能卡片区 */}
         <View className='user-center__features'>
-          <View className='user-center__feature' onClick={() => goTo('member-plan')}>
+          {/* <View className='user-center__feature' onClick={() => goTo('member-plan')}>
             <Image className='user-center__feature-plan' src={IconMember}></Image>
             <View className='user-center__feature-title' >会员计划</View>
             <View className='user-center__feature-desc'>解锁更多权限</View>
-          </View>
+          </View> */}
           <View className='user-center__feature'  onClick={goToSetting}>
             <Image className='user-center__feature-setting' src={IconSetting}></Image>
             <View className='user-center__feature-title'>设置中心</View>

@@ -20,7 +20,8 @@ const UserProfile: React.FC<UserProfileProps> = ({
   onEditClick
 }) => {
   const userInfo = useAppSelector(state => state.user.userInfo.data);
-  const vipStatus = showVipStatus ? (userInfo?.isMember ? '尊贵会员' : '还未加入会员') : '';
+  // const vipStatus = showVipStatus ? (userInfo?.isMember ? '尊贵会员' : '还未加入会员') : '';
+  const vipStatus = showVipStatus ? (userInfo?.isMember ? '尊贵会员' : '') : '';
   const [avatarUrl, setAvatarUrl] = useState(userInfo?.avatar || defaultAvatar);
   const [nickName, setNickName] = useState(userInfo?.nickname || defaultNickname);
 

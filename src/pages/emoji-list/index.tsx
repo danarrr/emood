@@ -13,7 +13,8 @@ import './index.less'
 
 
 const skinOptions = [
-  { key:'all', name: '大人不做选择', desc: '一次购买永久享有所有表情包', price: '29.9' },
+  // { key:'all', name: '大人不做选择', desc: '一次购买永久享有所有表情包', price: '29.9' },
+  { key:'all', name: '大人不做选择', desc: '', price: '29.9' },
   { key:'emoji1', name: 'emoji', img: domin + '/emoji1/d.png?', desc: '记录你的心情~', price: '6.9' },
   { key:'emoji2', name: '快乐小狗', img: domin + '/emoji2/d.png?' + sign, desc: '快乐小狗记录你的快乐~', price: '6.9' },
   { key:'emoji3', name: '美丽宝妈', img: domin + '/emoji3/a.png?', desc: '宝妈的日常，有欢乐有抓马~', price: '6.9' },
@@ -105,8 +106,9 @@ export default function EmojiList () {
     if (Array.isArray(hasSkinList) && (hasSkinList.includes(modalItem) || hasSkinList.includes('all'))) {
       return <View className='emoji-list__modal-btn' onClick={handleSetSkin}>设为当前皮肤</View>;
     }
-    const price = skinOptions.find(c => c.key === modalItem)?.price || '6.9';
-    return <View className='emoji-list__modal-btn' onClick={handlePay}>￥{price} 立即购买</View>;
+    // const price = skinOptions.find(c => c.key === modalItem)?.price || '6.9';
+    // return <View className='emoji-list__modal-btn' onClick={handlePay}>￥{price} 立即购买</View>;
+    return <View className='emoji-list__modal-btn' onClick={handlePay}>确定</View>;
   };
   return (
     <View className='emoji-list' >

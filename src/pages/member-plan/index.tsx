@@ -88,14 +88,15 @@ export default function MemberPlan () {
   return (
     <View className='member-plan'>
       {/* 顶部导航 */}
-      <PageHeader title='会员计划' />
+      {/* <PageHeader title='会员计划' /> */}
+      <PageHeader title='' />
       {/* 用户信息 */}
       <UserProfile 
         onProfileChange={handleProfileChange}
         onEditClick={handleEditClick}
         vipStatus={vipStatus}
       />
-      <Swiper
+      {/* <Swiper
         className='member-plan__cards'
         circular
         nextMargin={'40px'}
@@ -134,7 +135,7 @@ export default function MemberPlan () {
       <View className='member-plan__guide'>
         微信支付功能未上线，如有诉求请添加客服🌏：13417008504 即可开通。
       </View>
-      <Button className='member-plan__pay-btn' onClick={handlePayClick}>立即支付</Button>
+      <Button className='member-plan__pay-btn' onClick={handlePayClick}>立即支付</Button> */}
     </View>
   )
 }
